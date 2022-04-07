@@ -16,7 +16,7 @@
 from .condition import (
     Condition,
 )
-from .k8s.min import (
+from .k8s_min import (
     CloudSqlInstance,
     Container,
     ContainerPort,

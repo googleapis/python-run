@@ -15,7 +15,7 @@
 #
 import proto  # type: ignore
 
-from google.cloud.run_v2.types import k8s.min
+from google.cloud.run_v2.types import k8s_min
 from google.cloud.run_v2.types import vendor_settings
 from google.protobuf import duration_pb2  # type: ignore
 
@@ -37,9 +37,9 @@ class RevisionTemplate(proto.Message):
             The unique name for the revision. If this
             field is omitted, it will be automatically
             generated based on the Service name.
-        labels (Sequence[google.cloud.run_v2.types.RevisionTemplate.LabelsEntry]):
+        labels (Mapping[str, str]):
             KRM-style labels for the resource.
-        annotations (Sequence[google.cloud.run_v2.types.RevisionTemplate.AnnotationsEntry]):
+        annotations (Mapping[str, str]):
             KRM-style annotations for the resource.
         scaling (google.cloud.run_v2.types.RevisionScaling):
             Scaling settings for this Revision.
@@ -120,12 +120,12 @@ class RevisionTemplate(proto.Message):
     containers = proto.RepeatedField(
         proto.MESSAGE,
         number=10,
-        message=k8s.min.Container,
+        message=k8s_min.Container,
     )
     volumes = proto.RepeatedField(
         proto.MESSAGE,
         number=11,
-        message=k8s.min.Volume,
+        message=k8s_min.Volume,
     )
     confidential = proto.Field(
         proto.BOOL,

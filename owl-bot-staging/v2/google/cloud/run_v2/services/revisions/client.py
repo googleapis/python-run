@@ -39,7 +39,7 @@ from google.api_core import operation  # type: ignore
 from google.api_core import operation_async  # type: ignore
 from google.cloud.run_v2.services.revisions import pagers
 from google.cloud.run_v2.types import condition
-from google.cloud.run_v2.types import k8s.min
+from google.cloud.run_v2.types import k8s_min
 from google.cloud.run_v2.types import revision
 from google.cloud.run_v2.types import vendor_settings
 from google.protobuf import duration_pb2  # type: ignore

@@ -17,7 +17,7 @@ import proto  # type: ignore
 
 from google.api import launch_stage_pb2  # type: ignore
 from google.cloud.run_v2.types import condition
-from google.cloud.run_v2.types import k8s.min
+from google.cloud.run_v2.types import k8s_min
 from google.cloud.run_v2.types import vendor_settings
 from google.protobuf import duration_pb2  # type: ignore
 from google.protobuf import timestamp_pb2  # type: ignore
@@ -169,7 +169,7 @@ class Revision(proto.Message):
             Output only. A number that monotonically
             increases every time the user modifies the
             desired state.
-        labels (Sequence[google.cloud.run_v2.types.Revision.LabelsEntry]):
+        labels (Mapping[str, str]):
             KRM-style labels for the resource.
             User-provided labels are shared with Google's
             billing system, so they can be used to filter,
@@ -183,7 +183,7 @@ class Revision(proto.Message):
             'run.googleapis.com' or 'serving.knative.dev'
             namespaces. Those labels are read-only, and user
             changes will not be preserved.
-        annotations (Sequence[google.cloud.run_v2.types.Revision.AnnotationsEntry]):
+        annotations (Mapping[str, str]):
             KRM-style annotations for the resource.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
             Output only. The creation time.
@@ -342,12 +342,12 @@ class Revision(proto.Message):
     containers = proto.RepeatedField(
         proto.MESSAGE,
         number=17,
-        message=k8s.min.Container,
+        message=k8s_min.Container,
     )
     volumes = proto.RepeatedField(
         proto.MESSAGE,
         number=18,
-        message=k8s.min.Volume,
+        message=k8s_min.Volume,
     )
     confidential = proto.Field(
         proto.BOOL,
