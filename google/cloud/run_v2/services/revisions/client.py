@@ -16,7 +16,7 @@
 from collections import OrderedDict
 import os
 import re
-from typing import Dict, Optional, Sequence, Tuple, Type, Union
+from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, Union
 import pkg_resources
 
 from google.api_core import client_options as client_options_lib
@@ -554,7 +554,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         .. code-block:: python
 
-            from google.cloud import run_v2
+                    from google.cloud import run_v2
 
             def sample_get_revision():
                 # Create a client
@@ -655,7 +655,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         .. code-block:: python
 
-            from google.cloud import run_v2
+                    from google.cloud import run_v2
 
             def sample_list_revisions():
                 # Create a client
@@ -766,7 +766,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         .. code-block:: python
 
-            from google.cloud import run_v2
+                    from google.cloud import run_v2
 
             def sample_delete_revision():
                 # Create a client
