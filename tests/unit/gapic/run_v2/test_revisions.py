@@ -1720,7 +1720,6 @@ def test_revisions_transport_auth_adc(transport_class):
     [
         transports.RevisionsGrpcTransport,
         transports.RevisionsGrpcAsyncIOTransport,
-        transports.RevisionsRestTransport,
     ],
 )
 def test_revisions_transport_auth_gdch_credentials(transport_class):
