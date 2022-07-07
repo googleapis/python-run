@@ -3,7 +3,7 @@ Python Client for Cloud Run API
 
 |preview| |pypi| |versions|
 
-`Cloud Run API`_: 
+`Cloud Run API`_: is a managed compute platform that enables you to run containers that are invocable via requests or events.
 
 - `Client Library Documentation`_
 - `Product Documentation`_
