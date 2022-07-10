@@ -27,8 +27,9 @@ release_status = "Development Status :: 4 - Beta"
 url = "https://github.com/googleapis/python-run"
 dependencies = [
     "google-api-core[grpc] >= 2.8.0, <3.0.0dev",
-    "proto-plus >= 1.15.0",
-    "googleapis-common-protos >= 1.56.0",
+    "proto-plus >= 1.15.0, <2.0.0dev",
+    "protobuf >= 3.19.0, <4.0.0dev",
+    "googleapis-common-protos >= 1.56.1, <2.0.0dev",
     "grpc-google-iam-v1 >= 0.12.4, <1.0.0dev",
 ]
 
@@ -64,7 +65,6 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -74,7 +74,7 @@ setuptools.setup(
     ],
     platforms="Posix; MacOS X; Windows",
     packages=packages,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     namespace_packages=namespaces,
     install_requires=dependencies,
     include_package_data=True,
