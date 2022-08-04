@@ -22,7 +22,7 @@ import setuptools
 
 name = "google-cloud-run"
 description = "Cloud Run API client library"
-version = "0.2.0"
+version = "0.2.1"
 release_status = "Development Status :: 4 - Beta"
 url = "https://github.com/googleapis/python-run"
 dependencies = [
@@ -68,7 +68,6 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -78,7 +77,7 @@ setuptools.setup(
     ],
     platforms="Posix; MacOS X; Windows",
     packages=packages,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     namespace_packages=namespaces,
     install_requires=dependencies,
     include_package_data=True,
