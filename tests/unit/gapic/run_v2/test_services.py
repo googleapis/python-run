@@ -1365,9 +1365,6 @@ def test_list_services_pager(transport_name: str = "grpc"):
         )
 
         metadata = ()
-        metadata = tuple(metadata) + (
-            gapic_v1.routing_header.to_grpc_metadata((("parent", ""),)),
-        )
         pager = client.list_services(request={})
 
         assert pager._metadata == metadata

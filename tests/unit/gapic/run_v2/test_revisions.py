@@ -1148,9 +1148,6 @@ def test_list_revisions_pager(transport_name: str = "grpc"):
         )
 
         metadata = ()
-        metadata = tuple(metadata) + (
-            gapic_v1.routing_header.to_grpc_metadata((("parent", ""),)),
-        )
         pager = client.list_revisions(request={})
 
         assert pager._metadata == metadata
