@@ -29,7 +29,6 @@ dependencies = [
     "google-api-core[grpc] >= 1.33.0, <3.0.0dev,!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,!=2.4.*,!=2.5.*,!=2.6.*,!=2.7.*",
     "proto-plus >= 1.22.0, <2.0.0dev",
     "protobuf >= 3.20.1, <5.0.0dev",
-    "googleapis-common-protos >= 1.56.1, <2.0.0dev",
     "grpc-google-iam-v1 >= 0.12.4, <1.0.0dev",
 ]
 
