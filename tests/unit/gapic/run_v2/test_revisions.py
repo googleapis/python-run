@@ -840,7 +840,7 @@ def test_get_revision_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = revision.GetRevisionRequest(
-        {"name": "projects/sample1/locations/sample2/sample3"}
+        **{"name": "projects/sample1/locations/sample2/sample3"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1035,7 +1035,7 @@ def test_list_revisions_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = revision.ListRevisionsRequest(
-        {"parent": "projects/sample1/locations/sample2/sample3"}
+        **{"parent": "projects/sample1/locations/sample2/sample3"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1411,7 +1411,7 @@ def test_delete_revision_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = revision.DeleteRevisionRequest(
-        {"name": "projects/sample1/locations/sample2/sample3"}
+        **{"name": "projects/sample1/locations/sample2/sample3"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.

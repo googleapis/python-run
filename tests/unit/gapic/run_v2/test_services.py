@@ -780,7 +780,7 @@ def test_create_service_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = gcr_service.CreateServiceRequest(
-        {"parent": "projects/sample1/locations/sample2"}
+        **{"parent": "projects/sample1/locations/sample2"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1057,7 +1057,7 @@ def test_get_service_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = service.GetServiceRequest(
-        {"name": "projects/sample1/locations/sample2/sample3"}
+        **{"name": "projects/sample1/locations/sample2/sample3"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1252,7 +1252,7 @@ def test_list_services_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = service.ListServicesRequest(
-        {"parent": "projects/sample1/locations/sample2"}
+        **{"parent": "projects/sample1/locations/sample2"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1628,7 +1628,7 @@ def test_update_service_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = gcr_service.UpdateServiceRequest(
-        {"service": {"name": "projects/sample1/locations/sample2/sample3"}}
+        **{"service": {"name": "projects/sample1/locations/sample2/sample3"}}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
@@ -1819,7 +1819,7 @@ def test_delete_service_routing_parameters():
     # Any value that is part of the HTTP/1.1 URI should be sent as
     # a field header. Set these to a non-empty value.
     request = service.DeleteServiceRequest(
-        {"name": "projects/sample1/locations/sample2/sample3"}
+        **{"name": "projects/sample1/locations/sample2/sample3"}
     )
 
     # Mock the actual call within the gRPC stub, and fake the request.
