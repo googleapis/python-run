@@ -18,12 +18,33 @@ from google.cloud.run import gapic_version as package_version
 __version__ = package_version.__version__
 
 
+from .services.executions import ExecutionsClient
+from .services.executions import ExecutionsAsyncClient
+from .services.jobs import JobsClient
+from .services.jobs import JobsAsyncClient
 from .services.revisions import RevisionsClient
 from .services.revisions import RevisionsAsyncClient
 from .services.services import ServicesClient
 from .services.services import ServicesAsyncClient
+from .services.tasks import TasksClient
+from .services.tasks import TasksAsyncClient
 
 from .types.condition import Condition
+from .types.execution import DeleteExecutionRequest
+from .types.execution import Execution
+from .types.execution import GetExecutionRequest
+from .types.execution import ListExecutionsRequest
+from .types.execution import ListExecutionsResponse
+from .types.execution_template import ExecutionTemplate
+from .types.job import CreateJobRequest
+from .types.job import DeleteJobRequest
+from .types.job import ExecutionReference
+from .types.job import GetJobRequest
+from .types.job import Job
+from .types.job import ListJobsRequest
+from .types.job import ListJobsResponse
+from .types.job import RunJobRequest
+from .types.job import UpdateJobRequest
 from .types.k8s_min import CloudSqlInstance
 from .types.k8s_min import Container
 from .types.k8s_min import ContainerPort
@@ -52,6 +73,12 @@ from .types.service import ListServicesRequest
 from .types.service import ListServicesResponse
 from .types.service import Service
 from .types.service import UpdateServiceRequest
+from .types.task import GetTaskRequest
+from .types.task import ListTasksRequest
+from .types.task import ListTasksResponse
+from .types.task import Task
+from .types.task import TaskAttemptResult
+from .types.task_template import TaskTemplate
 from .types.traffic_target import TrafficTarget
 from .types.traffic_target import TrafficTargetStatus
 from .types.traffic_target import TrafficTargetAllocationType
@@ -62,42 +89,69 @@ from .types.vendor_settings import ExecutionEnvironment
 from .types.vendor_settings import IngressTraffic
 
 __all__ = (
+    "ExecutionsAsyncClient",
+    "JobsAsyncClient",
     "RevisionsAsyncClient",
     "ServicesAsyncClient",
+    "TasksAsyncClient",
     "BinaryAuthorization",
     "CloudSqlInstance",
     "Condition",
     "Container",
     "ContainerPort",
+    "CreateJobRequest",
     "CreateServiceRequest",
+    "DeleteExecutionRequest",
+    "DeleteJobRequest",
     "DeleteRevisionRequest",
     "DeleteServiceRequest",
     "EnvVar",
     "EnvVarSource",
+    "Execution",
     "ExecutionEnvironment",
+    "ExecutionReference",
+    "ExecutionTemplate",
+    "ExecutionsClient",
+    "GetExecutionRequest",
+    "GetJobRequest",
     "GetRevisionRequest",
     "GetServiceRequest",
+    "GetTaskRequest",
     "HTTPGetAction",
     "HTTPHeader",
     "IngressTraffic",
+    "Job",
+    "JobsClient",
+    "ListExecutionsRequest",
+    "ListExecutionsResponse",
+    "ListJobsRequest",
+    "ListJobsResponse",
     "ListRevisionsRequest",
     "ListRevisionsResponse",
     "ListServicesRequest",
     "ListServicesResponse",
+    "ListTasksRequest",
+    "ListTasksResponse",
     "Probe",
     "ResourceRequirements",
     "Revision",
     "RevisionScaling",
     "RevisionTemplate",
     "RevisionsClient",
+    "RunJobRequest",
     "SecretKeySelector",
     "SecretVolumeSource",
     "Service",
     "ServicesClient",
     "TCPSocketAction",
+    "Task",
+    "TaskAttemptResult",
+    "TaskTemplate",
+    "TasksClient",
     "TrafficTarget",
     "TrafficTargetAllocationType",
     "TrafficTargetStatus",
+    "UpdateJobRequest",
     "UpdateServiceRequest",
     "VersionToPath",
     "Volume",

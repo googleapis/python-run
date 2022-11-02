@@ -287,7 +287,7 @@ class RevisionsGrpcAsyncIOTransport(RevisionsTransport):
     ]:
         r"""Return a callable for the list revisions method over gRPC.
 
-        List Revisions from a given Service, or from a given
+        Lists Revisions from a given Service, or from a given
         location.
 
         Returns:
@@ -316,7 +316,7 @@ class RevisionsGrpcAsyncIOTransport(RevisionsTransport):
     ]:
         r"""Return a callable for the delete revision method over gRPC.
 
-        Delete a Revision.
+        Deletes a Revision.
 
         Returns:
             Callable[[~.DeleteRevisionRequest],

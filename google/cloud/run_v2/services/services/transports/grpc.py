@@ -308,7 +308,7 @@ class ServicesGrpcTransport(ServicesTransport):
     ) -> Callable[[service.ListServicesRequest], service.ListServicesResponse]:
         r"""Return a callable for the list services method over gRPC.
 
-        List Services.
+        Lists Services.
 
         Returns:
             Callable[[~.ListServicesRequest],
@@ -388,9 +388,9 @@ class ServicesGrpcTransport(ServicesTransport):
     ) -> Callable[[iam_policy_pb2.GetIamPolicyRequest], policy_pb2.Policy]:
         r"""Return a callable for the get iam policy method over gRPC.
 
-        Get the IAM Access Control policy currently in effect
-        for the given Cloud Run Service. This result does not
-        include any inherited policies.
+        Gets the IAM Access Control policy currently in
+        effect for the given Cloud Run Service. This result does
+        not include any inherited policies.
 
         Returns:
             Callable[[~.GetIamPolicyRequest],

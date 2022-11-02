@@ -603,8 +603,9 @@ class ServicesClient(metaclass=ServicesClientMeta):
                 The request object. Request message for creating a
                 Service.
             parent (str):
-                The location and project in which
-                this service should be created. Format:
+                Required. The location and project in
+                which this service should be created.
+                Format:
                 projects/{project}/locations/{location}
                 Only lowercase characters, digits, and
                 hyphens.
@@ -836,7 +837,7 @@ class ServicesClient(metaclass=ServicesClientMeta):
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> pagers.ListServicesPager:
-        r"""List Services.
+        r"""Lists Services.
 
         .. code-block:: python
 
@@ -1219,9 +1220,9 @@ class ServicesClient(metaclass=ServicesClientMeta):
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
-        r"""Get the IAM Access Control policy currently in effect
-        for the given Cloud Run Service. This result does not
-        include any inherited policies.
+        r"""Gets the IAM Access Control policy currently in
+        effect for the given Cloud Run Service. This result does
+        not include any inherited policies.
 
         .. code-block:: python
 

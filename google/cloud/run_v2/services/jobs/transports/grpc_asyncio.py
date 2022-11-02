@@ -26,20 +26,20 @@ import grpc  # type: ignore
 from grpc.experimental import aio  # type: ignore
 
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.types import service
-from google.cloud.run_v2.types import service as gcr_service
+from google.cloud.run_v2.types import job
+from google.cloud.run_v2.types import job as gcr_job
 from google.iam.v1 import iam_policy_pb2  # type: ignore
 from google.iam.v1 import policy_pb2  # type: ignore
 from google.longrunning import operations_pb2
 from google.longrunning import operations_pb2  # type: ignore
-from .base import ServicesTransport, DEFAULT_CLIENT_INFO
-from .grpc import ServicesGrpcTransport
+from .base import JobsTransport, DEFAULT_CLIENT_INFO
+from .grpc import JobsGrpcTransport
 
 
-class ServicesGrpcAsyncIOTransport(ServicesTransport):
-    """gRPC AsyncIO backend transport for Services.
+class JobsGrpcAsyncIOTransport(JobsTransport):
+    """gRPC AsyncIO backend transport for Jobs.
 
-    Cloud Run Service Control Plane API
+    Cloud Run Job Control Plane API.
 
     This class defines the same methods as the primary client, so the
     primary client can load the underlying transport implementation
@@ -257,18 +257,15 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         return self._operations_client
 
     @property
-    def create_service(
+    def create_job(
         self,
-    ) -> Callable[
-        [gcr_service.CreateServiceRequest], Awaitable[operations_pb2.Operation]
-    ]:
-        r"""Return a callable for the create service method over gRPC.
+    ) -> Callable[[gcr_job.CreateJobRequest], Awaitable[operations_pb2.Operation]]:
+        r"""Return a callable for the create job method over gRPC.
 
-        Creates a new Service in a given project and
-        location.
+        Creates a Job.
 
         Returns:
-            Callable[[~.CreateServiceRequest],
+            Callable[[~.CreateJobRequest],
                     Awaitable[~.Operation]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
@@ -277,25 +274,23 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "create_service" not in self._stubs:
-            self._stubs["create_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/CreateService",
-                request_serializer=gcr_service.CreateServiceRequest.serialize,
+        if "create_job" not in self._stubs:
+            self._stubs["create_job"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/CreateJob",
+                request_serializer=gcr_job.CreateJobRequest.serialize,
                 response_deserializer=operations_pb2.Operation.FromString,
             )
-        return self._stubs["create_service"]
+        return self._stubs["create_job"]
 
     @property
-    def get_service(
-        self,
-    ) -> Callable[[service.GetServiceRequest], Awaitable[service.Service]]:
-        r"""Return a callable for the get service method over gRPC.
+    def get_job(self) -> Callable[[job.GetJobRequest], Awaitable[job.Job]]:
+        r"""Return a callable for the get job method over gRPC.
 
-        Gets information about a Service.
+        Gets information about a Job.
 
         Returns:
-            Callable[[~.GetServiceRequest],
-                    Awaitable[~.Service]]:
+            Callable[[~.GetJobRequest],
+                    Awaitable[~.Job]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -303,27 +298,25 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "get_service" not in self._stubs:
-            self._stubs["get_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/GetService",
-                request_serializer=service.GetServiceRequest.serialize,
-                response_deserializer=service.Service.deserialize,
+        if "get_job" not in self._stubs:
+            self._stubs["get_job"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/GetJob",
+                request_serializer=job.GetJobRequest.serialize,
+                response_deserializer=job.Job.deserialize,
             )
-        return self._stubs["get_service"]
+        return self._stubs["get_job"]
 
     @property
-    def list_services(
+    def list_jobs(
         self,
-    ) -> Callable[
-        [service.ListServicesRequest], Awaitable[service.ListServicesResponse]
-    ]:
-        r"""Return a callable for the list services method over gRPC.
+    ) -> Callable[[job.ListJobsRequest], Awaitable[job.ListJobsResponse]]:
+        r"""Return a callable for the list jobs method over gRPC.
 
-        Lists Services.
+        Lists Jobs.
 
         Returns:
-            Callable[[~.ListServicesRequest],
-                    Awaitable[~.ListServicesResponse]]:
+            Callable[[~.ListJobsRequest],
+                    Awaitable[~.ListJobsResponse]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -331,26 +324,24 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "list_services" not in self._stubs:
-            self._stubs["list_services"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/ListServices",
-                request_serializer=service.ListServicesRequest.serialize,
-                response_deserializer=service.ListServicesResponse.deserialize,
+        if "list_jobs" not in self._stubs:
+            self._stubs["list_jobs"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/ListJobs",
+                request_serializer=job.ListJobsRequest.serialize,
+                response_deserializer=job.ListJobsResponse.deserialize,
             )
-        return self._stubs["list_services"]
+        return self._stubs["list_jobs"]
 
     @property
-    def update_service(
+    def update_job(
         self,
-    ) -> Callable[
-        [gcr_service.UpdateServiceRequest], Awaitable[operations_pb2.Operation]
-    ]:
-        r"""Return a callable for the update service method over gRPC.
+    ) -> Callable[[gcr_job.UpdateJobRequest], Awaitable[operations_pb2.Operation]]:
+        r"""Return a callable for the update job method over gRPC.
 
-        Updates a Service.
+        Updates a Job.
 
         Returns:
-            Callable[[~.UpdateServiceRequest],
+            Callable[[~.UpdateJobRequest],
                     Awaitable[~.Operation]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
@@ -359,26 +350,24 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "update_service" not in self._stubs:
-            self._stubs["update_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/UpdateService",
-                request_serializer=gcr_service.UpdateServiceRequest.serialize,
+        if "update_job" not in self._stubs:
+            self._stubs["update_job"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/UpdateJob",
+                request_serializer=gcr_job.UpdateJobRequest.serialize,
                 response_deserializer=operations_pb2.Operation.FromString,
             )
-        return self._stubs["update_service"]
+        return self._stubs["update_job"]
 
     @property
-    def delete_service(
+    def delete_job(
         self,
-    ) -> Callable[[service.DeleteServiceRequest], Awaitable[operations_pb2.Operation]]:
-        r"""Return a callable for the delete service method over gRPC.
+    ) -> Callable[[job.DeleteJobRequest], Awaitable[operations_pb2.Operation]]:
+        r"""Return a callable for the delete job method over gRPC.
 
-        Deletes a Service.
-        This will cause the Service to stop serving traffic and
-        will delete all revisions.
+        Deletes a Job.
 
         Returns:
-            Callable[[~.DeleteServiceRequest],
+            Callable[[~.DeleteJobRequest],
                     Awaitable[~.Operation]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
@@ -387,13 +376,39 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "delete_service" not in self._stubs:
-            self._stubs["delete_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/DeleteService",
-                request_serializer=service.DeleteServiceRequest.serialize,
+        if "delete_job" not in self._stubs:
+            self._stubs["delete_job"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/DeleteJob",
+                request_serializer=job.DeleteJobRequest.serialize,
                 response_deserializer=operations_pb2.Operation.FromString,
             )
-        return self._stubs["delete_service"]
+        return self._stubs["delete_job"]
+
+    @property
+    def run_job(
+        self,
+    ) -> Callable[[job.RunJobRequest], Awaitable[operations_pb2.Operation]]:
+        r"""Return a callable for the run job method over gRPC.
+
+        Triggers creation of a new Execution of this Job.
+
+        Returns:
+            Callable[[~.RunJobRequest],
+                    Awaitable[~.Operation]]:
+                A function that, when called, will call the underlying RPC
+                on the server.
+        """
+        # Generate a "stub function" on-the-fly which will actually make
+        # the request.
+        # gRPC handles serialization and deserialization, so we just need
+        # to pass in the functions for each.
+        if "run_job" not in self._stubs:
+            self._stubs["run_job"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Jobs/RunJob",
+                request_serializer=job.RunJobRequest.serialize,
+                response_deserializer=operations_pb2.Operation.FromString,
+            )
+        return self._stubs["run_job"]
 
     @property
     def get_iam_policy(
@@ -401,9 +416,9 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
     ) -> Callable[[iam_policy_pb2.GetIamPolicyRequest], Awaitable[policy_pb2.Policy]]:
         r"""Return a callable for the get iam policy method over gRPC.
 
-        Gets the IAM Access Control policy currently in
-        effect for the given Cloud Run Service. This result does
-        not include any inherited policies.
+        Get the IAM Access Control policy currently in effect
+        for the given Job. This result does not include any
+        inherited policies.
 
         Returns:
             Callable[[~.GetIamPolicyRequest],
@@ -417,7 +432,7 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # to pass in the functions for each.
         if "get_iam_policy" not in self._stubs:
             self._stubs["get_iam_policy"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/GetIamPolicy",
+                "/google.cloud.run.v2.Jobs/GetIamPolicy",
                 request_serializer=iam_policy_pb2.GetIamPolicyRequest.SerializeToString,
                 response_deserializer=policy_pb2.Policy.FromString,
             )
@@ -430,7 +445,7 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         r"""Return a callable for the set iam policy method over gRPC.
 
         Sets the IAM Access control policy for the specified
-        Service. Overwrites any existing policy.
+        Job. Overwrites any existing policy.
 
         Returns:
             Callable[[~.SetIamPolicyRequest],
@@ -444,7 +459,7 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # to pass in the functions for each.
         if "set_iam_policy" not in self._stubs:
             self._stubs["set_iam_policy"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/SetIamPolicy",
+                "/google.cloud.run.v2.Jobs/SetIamPolicy",
                 request_serializer=iam_policy_pb2.SetIamPolicyRequest.SerializeToString,
                 response_deserializer=policy_pb2.Policy.FromString,
             )
@@ -476,7 +491,7 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # to pass in the functions for each.
         if "test_iam_permissions" not in self._stubs:
             self._stubs["test_iam_permissions"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/TestIamPermissions",
+                "/google.cloud.run.v2.Jobs/TestIamPermissions",
                 request_serializer=iam_policy_pb2.TestIamPermissionsRequest.SerializeToString,
                 response_deserializer=iam_policy_pb2.TestIamPermissionsResponse.FromString,
             )
@@ -539,4 +554,4 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         return self._stubs["list_operations"]
 
 
-__all__ = ("ServicesGrpcAsyncIOTransport",)
+__all__ = ("JobsGrpcAsyncIOTransport",)

@@ -34,41 +34,38 @@ try:
 except AttributeError:  # pragma: NO COVER
     OptionalRetry = Union[retries.Retry, object]  # type: ignore
 
-from google.api import launch_stage_pb2  # type: ignore
-from google.api_core import operation  # type: ignore
-from google.api_core import operation_async  # type: ignore
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.services.revisions import pagers
+from google.cloud.run_v2.services.tasks import pagers
 from google.cloud.run_v2.types import condition
 from google.cloud.run_v2.types import k8s_min
-from google.cloud.run_v2.types import revision
+from google.cloud.run_v2.types import task
 from google.cloud.run_v2.types import vendor_settings
 from google.longrunning import operations_pb2
 from google.protobuf import duration_pb2  # type: ignore
 from google.protobuf import timestamp_pb2  # type: ignore
-from .transports.base import RevisionsTransport, DEFAULT_CLIENT_INFO
-from .transports.grpc import RevisionsGrpcTransport
-from .transports.grpc_asyncio import RevisionsGrpcAsyncIOTransport
-from .transports.rest import RevisionsRestTransport
+from .transports.base import TasksTransport, DEFAULT_CLIENT_INFO
+from .transports.grpc import TasksGrpcTransport
+from .transports.grpc_asyncio import TasksGrpcAsyncIOTransport
+from .transports.rest import TasksRestTransport
 
 
-class RevisionsClientMeta(type):
-    """Metaclass for the Revisions client.
+class TasksClientMeta(type):
+    """Metaclass for the Tasks client.
 
     This provides class-level methods for building and retrieving
     support objects (e.g. transport) without polluting the client instance
     objects.
     """
 
-    _transport_registry = OrderedDict()  # type: Dict[str, Type[RevisionsTransport]]
-    _transport_registry["grpc"] = RevisionsGrpcTransport
-    _transport_registry["grpc_asyncio"] = RevisionsGrpcAsyncIOTransport
-    _transport_registry["rest"] = RevisionsRestTransport
+    _transport_registry = OrderedDict()  # type: Dict[str, Type[TasksTransport]]
+    _transport_registry["grpc"] = TasksGrpcTransport
+    _transport_registry["grpc_asyncio"] = TasksGrpcAsyncIOTransport
+    _transport_registry["rest"] = TasksRestTransport
 
     def get_transport_class(
         cls,
         label: str = None,
-    ) -> Type[RevisionsTransport]:
+    ) -> Type[TasksTransport]:
         """Returns an appropriate transport class.
 
         Args:
@@ -87,8 +84,8 @@ class RevisionsClientMeta(type):
         return next(iter(cls._transport_registry.values()))
 
 
-class RevisionsClient(metaclass=RevisionsClientMeta):
-    """Cloud Run Revision Control Plane API."""
+class TasksClient(metaclass=TasksClientMeta):
+    """Cloud Run Task Control Plane API."""
 
     @staticmethod
     def _get_default_mtls_endpoint(api_endpoint):
@@ -136,7 +133,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             kwargs: Additional arguments to pass to the constructor.
 
         Returns:
-            RevisionsClient: The constructed client.
+            TasksClient: The constructed client.
         """
         credentials = service_account.Credentials.from_service_account_info(info)
         kwargs["credentials"] = credentials
@@ -154,7 +151,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             kwargs: Additional arguments to pass to the constructor.
 
         Returns:
-            RevisionsClient: The constructed client.
+            TasksClient: The constructed client.
         """
         credentials = service_account.Credentials.from_service_account_file(filename)
         kwargs["credentials"] = credentials
@@ -163,11 +160,11 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
     from_service_account_json = from_service_account_file
 
     @property
-    def transport(self) -> RevisionsTransport:
+    def transport(self) -> TasksTransport:
         """Returns the transport used by the client instance.
 
         Returns:
-            RevisionsTransport: The transport used by the client
+            TasksTransport: The transport used by the client
                 instance.
         """
         return self._transport
@@ -219,25 +216,47 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         return m.groupdict() if m else {}
 
     @staticmethod
-    def revision_path(
+    def execution_path(
         project: str,
         location: str,
-        service: str,
-        revision: str,
+        job: str,
+        execution: str,
     ) -> str:
-        """Returns a fully-qualified revision string."""
-        return "projects/{project}/locations/{location}/services/{service}/revisions/{revision}".format(
+        """Returns a fully-qualified execution string."""
+        return "projects/{project}/locations/{location}/jobs/{job}/executions/{execution}".format(
             project=project,
             location=location,
-            service=service,
-            revision=revision,
+            job=job,
+            execution=execution,
         )
 
     @staticmethod
-    def parse_revision_path(path: str) -> Dict[str, str]:
-        """Parses a revision path into its component segments."""
+    def parse_execution_path(path: str) -> Dict[str, str]:
+        """Parses a execution path into its component segments."""
         m = re.match(
-            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/services/(?P<service>.+?)/revisions/(?P<revision>.+?)$",
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/jobs/(?P<job>.+?)/executions/(?P<execution>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def job_path(
+        project: str,
+        location: str,
+        job: str,
+    ) -> str:
+        """Returns a fully-qualified job string."""
+        return "projects/{project}/locations/{location}/jobs/{job}".format(
+            project=project,
+            location=location,
+            job=job,
+        )
+
+    @staticmethod
+    def parse_job_path(path: str) -> Dict[str, str]:
+        """Parses a job path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/jobs/(?P<job>.+?)$",
             path,
         )
         return m.groupdict() if m else {}
@@ -282,23 +301,27 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         return m.groupdict() if m else {}
 
     @staticmethod
-    def service_path(
+    def task_path(
         project: str,
         location: str,
-        service: str,
+        job: str,
+        execution: str,
+        task: str,
     ) -> str:
-        """Returns a fully-qualified service string."""
-        return "projects/{project}/locations/{location}/services/{service}".format(
+        """Returns a fully-qualified task string."""
+        return "projects/{project}/locations/{location}/jobs/{job}/executions/{execution}/tasks/{task}".format(
             project=project,
             location=location,
-            service=service,
+            job=job,
+            execution=execution,
+            task=task,
         )
 
     @staticmethod
-    def parse_service_path(path: str) -> Dict[str, str]:
-        """Parses a service path into its component segments."""
+    def parse_task_path(path: str) -> Dict[str, str]:
+        """Parses a task path into its component segments."""
         m = re.match(
-            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/services/(?P<service>.+?)$",
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/jobs/(?P<job>.+?)/executions/(?P<execution>.+?)/tasks/(?P<task>.+?)$",
             path,
         )
         return m.groupdict() if m else {}
@@ -451,11 +474,11 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         self,
         *,
         credentials: Optional[ga_credentials.Credentials] = None,
-        transport: Union[str, RevisionsTransport, None] = None,
+        transport: Union[str, TasksTransport, None] = None,
         client_options: Optional[Union[client_options_lib.ClientOptions, dict]] = None,
         client_info: gapic_v1.client_info.ClientInfo = DEFAULT_CLIENT_INFO,
     ) -> None:
-        """Instantiates the revisions client.
+        """Instantiates the tasks client.
 
         Args:
             credentials (Optional[google.auth.credentials.Credentials]): The
@@ -463,7 +486,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
                 credentials identify the application to the service; if none
                 are specified, the client will attempt to ascertain the
                 credentials from the environment.
-            transport (Union[str, RevisionsTransport]): The
+            transport (Union[str, TasksTransport]): The
                 transport to use. If set to None, a transport is chosen
                 automatically.
                 NOTE: "rest" transport functionality is currently in a
@@ -514,8 +537,8 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         # Save or instantiate the transport.
         # Ordinarily, we provide the transport, but allowing a custom transport
         # instance provides an extensibility point for unusual situations.
-        if isinstance(transport, RevisionsTransport):
-            # transport is a RevisionsTransport instance.
+        if isinstance(transport, TasksTransport):
+            # transport is a TasksTransport instance.
             if credentials or client_options.credentials_file or api_key_value:
                 raise ValueError(
                     "When providing a transport instance, "
@@ -550,16 +573,16 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
                 api_audience=client_options.api_audience,
             )
 
-    def get_revision(
+    def get_task(
         self,
-        request: Union[revision.GetRevisionRequest, dict] = None,
+        request: Union[task.GetTaskRequest, dict] = None,
         *,
         name: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> revision.Revision:
-        r"""Gets information about a Revision.
+    ) -> task.Task:
+        r"""Gets information about a Task.
 
         .. code-block:: python
 
@@ -572,29 +595,29 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            def sample_get_revision():
+            def sample_get_task():
                 # Create a client
-                client = run_v2.RevisionsClient()
+                client = run_v2.TasksClient()
 
                 # Initialize request argument(s)
-                request = run_v2.GetRevisionRequest(
+                request = run_v2.GetTaskRequest(
                     name="name_value",
                 )
 
                 # Make the request
-                response = client.get_revision(request=request)
+                response = client.get_task(request=request)
 
                 # Handle the response
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.GetRevisionRequest, dict]):
-                The request object. Request message for obtaining a
-                Revision by its full name.
+            request (Union[google.cloud.run_v2.types.GetTaskRequest, dict]):
+                The request object. Request message for obtaining a Task
+                by its full name.
             name (str):
-                Required. The full name of the
-                Revision. Format:
-                projects/{project}/locations/{location}/services/{service}/revisions/{revision}
+                Required. The full name of the Task.
+                Format:
+                projects/{project}/locations/{location}/jobs/{job}/executions/{execution}/tasks/{task}
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -606,12 +629,9 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
                 sent along with the request as metadata.
 
         Returns:
-            google.cloud.run_v2.types.Revision:
-                A Revision is an immutable snapshot
-                of code and configuration.  A Revision
-                references a container image. Revisions
-                are only created by updates to its
-                parent Service.
+            google.cloud.run_v2.types.Task:
+                Task represents a single run of a
+                container to completion.
 
         """
         # Create or coerce a protobuf request object.
@@ -625,11 +645,11 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             )
 
         # Minor optimization to avoid making a copy if the user passes
-        # in a revision.GetRevisionRequest.
+        # in a task.GetTaskRequest.
         # There's no risk of modifying the input as we've already verified
         # there are no flattened fields.
-        if not isinstance(request, revision.GetRevisionRequest):
-            request = revision.GetRevisionRequest(request)
+        if not isinstance(request, task.GetTaskRequest):
+            request = task.GetTaskRequest(request)
             # If we have keyword arguments corresponding to fields on the
             # request, apply these.
             if name is not None:
@@ -637,21 +657,13 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = self._transport._wrapped_methods[self._transport.get_revision]
+        rpc = self._transport._wrapped_methods[self._transport.get_task]
 
-        header_params = {}
-
-        routing_param_regex = re.compile(
-            "^projects/[^/]+/locations/(?P<location>[^/]+)(?:/.*)?$"
+        # Certain fields should be provided within the metadata header;
+        # add these here.
+        metadata = tuple(metadata) + (
+            gapic_v1.routing_header.to_grpc_metadata((("name", request.name),)),
         )
-        regex_match = routing_param_regex.match(request.name)
-        if regex_match and regex_match.group("location"):
-            header_params["location"] = regex_match.group("location")
-
-        if header_params:
-            metadata = tuple(metadata) + (
-                gapic_v1.routing_header.to_grpc_metadata(header_params),
-            )
 
         # Send the request.
         response = rpc(
@@ -664,17 +676,16 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         # Done; return the response.
         return response
 
-    def list_revisions(
+    def list_tasks(
         self,
-        request: Union[revision.ListRevisionsRequest, dict] = None,
+        request: Union[task.ListTasksRequest, dict] = None,
         *,
         parent: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> pagers.ListRevisionsPager:
-        r"""Lists Revisions from a given Service, or from a given
-        location.
+    ) -> pagers.ListTasksPager:
+        r"""Lists Tasks from an Execution of a Job.
 
         .. code-block:: python
 
@@ -687,32 +698,34 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            def sample_list_revisions():
+            def sample_list_tasks():
                 # Create a client
-                client = run_v2.RevisionsClient()
+                client = run_v2.TasksClient()
 
                 # Initialize request argument(s)
-                request = run_v2.ListRevisionsRequest(
+                request = run_v2.ListTasksRequest(
                     parent="parent_value",
                 )
 
                 # Make the request
-                page_result = client.list_revisions(request=request)
+                page_result = client.list_tasks(request=request)
 
                 # Handle the response
                 for response in page_result:
                     print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.ListRevisionsRequest, dict]):
+            request (Union[google.cloud.run_v2.types.ListTasksRequest, dict]):
                 The request object. Request message for retrieving a
-                list of Revisions.
+                list of Tasks.
             parent (str):
-                Required. The Service from which the
-                Revisions should be listed. To list all
-                Revisions across Services, use "-"
-                instead of Service name. Format:
-                projects/{project}/locations/{location}/services/{service}
+                Required. The Execution from which
+                the Tasks should be listed. To list all
+                Tasks across Executions of a Job, use
+                "-" instead of Execution name. To list
+                all Tasks across Jobs, use "-" instead
+                of Job name. Format:
+                projects/{project}/locations/{location}/jobs/{job}/executions/{execution}
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -724,9 +737,9 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
                 sent along with the request as metadata.
 
         Returns:
-            google.cloud.run_v2.services.revisions.pagers.ListRevisionsPager:
+            google.cloud.run_v2.services.tasks.pagers.ListTasksPager:
                 Response message containing a list of
-                Revisions.
+                Tasks.
                 Iterating over this object will yield
                 results and resolve additional pages
                 automatically.
@@ -743,11 +756,11 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
             )
 
         # Minor optimization to avoid making a copy if the user passes
-        # in a revision.ListRevisionsRequest.
+        # in a task.ListTasksRequest.
         # There's no risk of modifying the input as we've already verified
         # there are no flattened fields.
-        if not isinstance(request, revision.ListRevisionsRequest):
-            request = revision.ListRevisionsRequest(request)
+        if not isinstance(request, task.ListTasksRequest):
+            request = task.ListTasksRequest(request)
             # If we have keyword arguments corresponding to fields on the
             # request, apply these.
             if parent is not None:
@@ -755,21 +768,13 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = self._transport._wrapped_methods[self._transport.list_revisions]
+        rpc = self._transport._wrapped_methods[self._transport.list_tasks]
 
-        header_params = {}
-
-        routing_param_regex = re.compile(
-            "^projects/[^/]+/locations/(?P<location>[^/]+)(?:/.*)?$"
+        # Certain fields should be provided within the metadata header;
+        # add these here.
+        metadata = tuple(metadata) + (
+            gapic_v1.routing_header.to_grpc_metadata((("parent", request.parent),)),
         )
-        regex_match = routing_param_regex.match(request.parent)
-        if regex_match and regex_match.group("location"):
-            header_params["location"] = regex_match.group("location")
-
-        if header_params:
-            metadata = tuple(metadata) + (
-                gapic_v1.routing_header.to_grpc_metadata(header_params),
-            )
 
         # Send the request.
         response = rpc(
@@ -781,139 +786,11 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
 
         # This method is paged; wrap the response in a pager, which provides
         # an `__iter__` convenience method.
-        response = pagers.ListRevisionsPager(
+        response = pagers.ListTasksPager(
             method=rpc,
             request=request,
             response=response,
             metadata=metadata,
-        )
-
-        # Done; return the response.
-        return response
-
-    def delete_revision(
-        self,
-        request: Union[revision.DeleteRevisionRequest, dict] = None,
-        *,
-        name: str = None,
-        retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
-        metadata: Sequence[Tuple[str, str]] = (),
-    ) -> operation.Operation:
-        r"""Deletes a Revision.
-
-        .. code-block:: python
-
-            # This snippet has been automatically generated and should be regarded as a
-            # code template only.
-            # It will require modifications to work:
-            # - It may require correct/in-range values for request initialization.
-            # - It may require specifying regional endpoints when creating the service
-            #   client as shown in:
-            #   https://googleapis.dev/python/google-api-core/latest/client_options.html
-            from google.cloud import run_v2
-
-            def sample_delete_revision():
-                # Create a client
-                client = run_v2.RevisionsClient()
-
-                # Initialize request argument(s)
-                request = run_v2.DeleteRevisionRequest(
-                    name="name_value",
-                )
-
-                # Make the request
-                operation = client.delete_revision(request=request)
-
-                print("Waiting for operation to complete...")
-
-                response = operation.result()
-
-                # Handle the response
-                print(response)
-
-        Args:
-            request (Union[google.cloud.run_v2.types.DeleteRevisionRequest, dict]):
-                The request object. Request message for deleting a
-                retired Revision. Revision lifecycle is usually managed
-                by making changes to the parent Service. Only retired
-                revisions can be deleted with this API.
-            name (str):
-                Required. The name of the Revision to
-                delete. Format:
-                projects/{project}/locations/{location}/services/{service}/revisions/{revision}
-
-                This corresponds to the ``name`` field
-                on the ``request`` instance; if ``request`` is provided, this
-                should not be set.
-            retry (google.api_core.retry.Retry): Designation of what errors, if any,
-                should be retried.
-            timeout (float): The timeout for this request.
-            metadata (Sequence[Tuple[str, str]]): Strings which should be
-                sent along with the request as metadata.
-
-        Returns:
-            google.api_core.operation.Operation:
-                An object representing a long-running operation.
-
-                The result type for the operation will be :class:`google.cloud.run_v2.types.Revision` A Revision is an immutable snapshot of code and configuration. A Revision
-                   references a container image. Revisions are only
-                   created by updates to its parent Service.
-
-        """
-        # Create or coerce a protobuf request object.
-        # Quick check: If we got a request object, we should *not* have
-        # gotten any keyword arguments that map to the request.
-        has_flattened_params = any([name])
-        if request is not None and has_flattened_params:
-            raise ValueError(
-                "If the `request` argument is set, then none of "
-                "the individual field arguments should be set."
-            )
-
-        # Minor optimization to avoid making a copy if the user passes
-        # in a revision.DeleteRevisionRequest.
-        # There's no risk of modifying the input as we've already verified
-        # there are no flattened fields.
-        if not isinstance(request, revision.DeleteRevisionRequest):
-            request = revision.DeleteRevisionRequest(request)
-            # If we have keyword arguments corresponding to fields on the
-            # request, apply these.
-            if name is not None:
-                request.name = name
-
-        # Wrap the RPC method; this adds retry and timeout information,
-        # and friendly error handling.
-        rpc = self._transport._wrapped_methods[self._transport.delete_revision]
-
-        header_params = {}
-
-        routing_param_regex = re.compile(
-            "^projects/[^/]+/locations/(?P<location>[^/]+)(?:/.*)?$"
-        )
-        regex_match = routing_param_regex.match(request.name)
-        if regex_match and regex_match.group("location"):
-            header_params["location"] = regex_match.group("location")
-
-        if header_params:
-            metadata = tuple(metadata) + (
-                gapic_v1.routing_header.to_grpc_metadata(header_params),
-            )
-
-        # Send the request.
-        response = rpc(
-            request,
-            retry=retry,
-            timeout=timeout,
-            metadata=metadata,
-        )
-
-        # Wrap the response in an operation future.
-        response = operation.from_gapic(
-            response,
-            self._transport.operations_client,
-            revision.Revision,
-            metadata_type=revision.Revision,
         )
 
         # Done; return the response.
@@ -1106,4 +983,4 @@ except pkg_resources.DistributionNotFound:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo()
 
 
-__all__ = ("RevisionsClient",)
+__all__ = ("TasksClient",)

@@ -26,16 +26,16 @@ from google.auth.transport.grpc import SslCredentials  # type: ignore
 import grpc  # type: ignore
 
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.types import revision
+from google.cloud.run_v2.types import execution
 from google.longrunning import operations_pb2
 from google.longrunning import operations_pb2  # type: ignore
-from .base import RevisionsTransport, DEFAULT_CLIENT_INFO
+from .base import ExecutionsTransport, DEFAULT_CLIENT_INFO
 
 
-class RevisionsGrpcTransport(RevisionsTransport):
-    """gRPC backend transport for Revisions.
+class ExecutionsGrpcTransport(ExecutionsTransport):
+    """gRPC backend transport for Executions.
 
-    Cloud Run Revision Control Plane API.
+    Cloud Run Execution Control Plane API.
 
     This class defines the same methods as the primary client, so the
     primary client can load the underlying transport implementation
@@ -249,16 +249,16 @@ class RevisionsGrpcTransport(RevisionsTransport):
         return self._operations_client
 
     @property
-    def get_revision(
+    def get_execution(
         self,
-    ) -> Callable[[revision.GetRevisionRequest], revision.Revision]:
-        r"""Return a callable for the get revision method over gRPC.
+    ) -> Callable[[execution.GetExecutionRequest], execution.Execution]:
+        r"""Return a callable for the get execution method over gRPC.
 
-        Gets information about a Revision.
+        Gets information about an Execution.
 
         Returns:
-            Callable[[~.GetRevisionRequest],
-                    ~.Revision]:
+            Callable[[~.GetExecutionRequest],
+                    ~.Execution]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -266,26 +266,25 @@ class RevisionsGrpcTransport(RevisionsTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "get_revision" not in self._stubs:
-            self._stubs["get_revision"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/GetRevision",
-                request_serializer=revision.GetRevisionRequest.serialize,
-                response_deserializer=revision.Revision.deserialize,
+        if "get_execution" not in self._stubs:
+            self._stubs["get_execution"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/GetExecution",
+                request_serializer=execution.GetExecutionRequest.serialize,
+                response_deserializer=execution.Execution.deserialize,
             )
-        return self._stubs["get_revision"]
+        return self._stubs["get_execution"]
 
     @property
-    def list_revisions(
+    def list_executions(
         self,
-    ) -> Callable[[revision.ListRevisionsRequest], revision.ListRevisionsResponse]:
-        r"""Return a callable for the list revisions method over gRPC.
+    ) -> Callable[[execution.ListExecutionsRequest], execution.ListExecutionsResponse]:
+        r"""Return a callable for the list executions method over gRPC.
 
-        Lists Revisions from a given Service, or from a given
-        location.
+        Lists Executions from a Job.
 
         Returns:
-            Callable[[~.ListRevisionsRequest],
-                    ~.ListRevisionsResponse]:
+            Callable[[~.ListExecutionsRequest],
+                    ~.ListExecutionsResponse]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -293,24 +292,24 @@ class RevisionsGrpcTransport(RevisionsTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "list_revisions" not in self._stubs:
-            self._stubs["list_revisions"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/ListRevisions",
-                request_serializer=revision.ListRevisionsRequest.serialize,
-                response_deserializer=revision.ListRevisionsResponse.deserialize,
+        if "list_executions" not in self._stubs:
+            self._stubs["list_executions"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/ListExecutions",
+                request_serializer=execution.ListExecutionsRequest.serialize,
+                response_deserializer=execution.ListExecutionsResponse.deserialize,
             )
-        return self._stubs["list_revisions"]
+        return self._stubs["list_executions"]
 
     @property
-    def delete_revision(
+    def delete_execution(
         self,
-    ) -> Callable[[revision.DeleteRevisionRequest], operations_pb2.Operation]:
-        r"""Return a callable for the delete revision method over gRPC.
+    ) -> Callable[[execution.DeleteExecutionRequest], operations_pb2.Operation]:
+        r"""Return a callable for the delete execution method over gRPC.
 
-        Deletes a Revision.
+        Deletes an Execution.
 
         Returns:
-            Callable[[~.DeleteRevisionRequest],
+            Callable[[~.DeleteExecutionRequest],
                     ~.Operation]:
                 A function that, when called, will call the underlying RPC
                 on the server.
@@ -319,13 +318,13 @@ class RevisionsGrpcTransport(RevisionsTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "delete_revision" not in self._stubs:
-            self._stubs["delete_revision"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/DeleteRevision",
-                request_serializer=revision.DeleteRevisionRequest.serialize,
+        if "delete_execution" not in self._stubs:
+            self._stubs["delete_execution"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/DeleteExecution",
+                request_serializer=execution.DeleteExecutionRequest.serialize,
                 response_deserializer=operations_pb2.Operation.FromString,
             )
-        return self._stubs["delete_revision"]
+        return self._stubs["delete_execution"]
 
     def close(self):
         self.grpc_channel.close()
@@ -388,4 +387,4 @@ class RevisionsGrpcTransport(RevisionsTransport):
         return "grpc"
 
 
-__all__ = ("RevisionsGrpcTransport",)
+__all__ = ("ExecutionsGrpcTransport",)

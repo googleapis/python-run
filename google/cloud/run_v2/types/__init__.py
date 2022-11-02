@@ -16,6 +16,27 @@
 from .condition import (
     Condition,
 )
+from .execution import (
+    DeleteExecutionRequest,
+    Execution,
+    GetExecutionRequest,
+    ListExecutionsRequest,
+    ListExecutionsResponse,
+)
+from .execution_template import (
+    ExecutionTemplate,
+)
+from .job import (
+    CreateJobRequest,
+    DeleteJobRequest,
+    ExecutionReference,
+    GetJobRequest,
+    Job,
+    ListJobsRequest,
+    ListJobsResponse,
+    RunJobRequest,
+    UpdateJobRequest,
+)
 from .k8s_min import (
     CloudSqlInstance,
     Container,
@@ -52,6 +73,16 @@ from .service import (
     Service,
     UpdateServiceRequest,
 )
+from .task import (
+    GetTaskRequest,
+    ListTasksRequest,
+    ListTasksResponse,
+    Task,
+    TaskAttemptResult,
+)
+from .task_template import (
+    TaskTemplate,
+)
 from .traffic_target import (
     TrafficTarget,
     TrafficTargetStatus,
@@ -67,6 +98,21 @@ from .vendor_settings import (
 
 __all__ = (
     "Condition",
+    "DeleteExecutionRequest",
+    "Execution",
+    "GetExecutionRequest",
+    "ListExecutionsRequest",
+    "ListExecutionsResponse",
+    "ExecutionTemplate",
+    "CreateJobRequest",
+    "DeleteJobRequest",
+    "ExecutionReference",
+    "GetJobRequest",
+    "Job",
+    "ListJobsRequest",
+    "ListJobsResponse",
+    "RunJobRequest",
+    "UpdateJobRequest",
     "CloudSqlInstance",
     "Container",
     "ContainerPort",
@@ -95,6 +141,12 @@ __all__ = (
     "ListServicesResponse",
     "Service",
     "UpdateServiceRequest",
+    "GetTaskRequest",
+    "ListTasksRequest",
+    "ListTasksResponse",
+    "Task",
+    "TaskAttemptResult",
+    "TaskTemplate",
     "TrafficTarget",
     "TrafficTargetStatus",
     "TrafficTargetAllocationType",

@@ -14,16 +14,19 @@
 # limitations under the License.
 #
 from collections import OrderedDict
-import functools
+import os
 import re
-from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, Union
+from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, Union, cast
 import pkg_resources
 
-from google.api_core.client_options import ClientOptions
+from google.api_core import client_options as client_options_lib
 from google.api_core import exceptions as core_exceptions
 from google.api_core import gapic_v1
 from google.api_core import retry as retries
 from google.auth import credentials as ga_credentials  # type: ignore
+from google.auth.transport import mtls  # type: ignore
+from google.auth.transport.grpc import SslCredentials  # type: ignore
+from google.auth.exceptions import MutualTLSChannelError  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
 try:
@@ -35,58 +38,95 @@ from google.api import launch_stage_pb2  # type: ignore
 from google.api_core import operation  # type: ignore
 from google.api_core import operation_async  # type: ignore
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.services.services import pagers
+from google.cloud.run_v2.services.jobs import pagers
 from google.cloud.run_v2.types import condition
-from google.cloud.run_v2.types import revision_template
-from google.cloud.run_v2.types import service
-from google.cloud.run_v2.types import service as gcr_service
-from google.cloud.run_v2.types import traffic_target
+from google.cloud.run_v2.types import execution
+from google.cloud.run_v2.types import execution_template
+from google.cloud.run_v2.types import job
+from google.cloud.run_v2.types import job as gcr_job
 from google.cloud.run_v2.types import vendor_settings
 from google.iam.v1 import iam_policy_pb2  # type: ignore
 from google.iam.v1 import policy_pb2  # type: ignore
 from google.longrunning import operations_pb2
 from google.protobuf import timestamp_pb2  # type: ignore
-from .transports.base import ServicesTransport, DEFAULT_CLIENT_INFO
-from .transports.grpc_asyncio import ServicesGrpcAsyncIOTransport
-from .client import ServicesClient
+from .transports.base import JobsTransport, DEFAULT_CLIENT_INFO
+from .transports.grpc import JobsGrpcTransport
+from .transports.grpc_asyncio import JobsGrpcAsyncIOTransport
+from .transports.rest import JobsRestTransport
 
 
-class ServicesAsyncClient:
-    """Cloud Run Service Control Plane API"""
+class JobsClientMeta(type):
+    """Metaclass for the Jobs client.
 
-    _client: ServicesClient
+    This provides class-level methods for building and retrieving
+    support objects (e.g. transport) without polluting the client instance
+    objects.
+    """
 
-    DEFAULT_ENDPOINT = ServicesClient.DEFAULT_ENDPOINT
-    DEFAULT_MTLS_ENDPOINT = ServicesClient.DEFAULT_MTLS_ENDPOINT
+    _transport_registry = OrderedDict()  # type: Dict[str, Type[JobsTransport]]
+    _transport_registry["grpc"] = JobsGrpcTransport
+    _transport_registry["grpc_asyncio"] = JobsGrpcAsyncIOTransport
+    _transport_registry["rest"] = JobsRestTransport
 
-    connector_path = staticmethod(ServicesClient.connector_path)
-    parse_connector_path = staticmethod(ServicesClient.parse_connector_path)
-    crypto_key_path = staticmethod(ServicesClient.crypto_key_path)
-    parse_crypto_key_path = staticmethod(ServicesClient.parse_crypto_key_path)
-    revision_path = staticmethod(ServicesClient.revision_path)
-    parse_revision_path = staticmethod(ServicesClient.parse_revision_path)
-    secret_path = staticmethod(ServicesClient.secret_path)
-    parse_secret_path = staticmethod(ServicesClient.parse_secret_path)
-    secret_version_path = staticmethod(ServicesClient.secret_version_path)
-    parse_secret_version_path = staticmethod(ServicesClient.parse_secret_version_path)
-    service_path = staticmethod(ServicesClient.service_path)
-    parse_service_path = staticmethod(ServicesClient.parse_service_path)
-    common_billing_account_path = staticmethod(
-        ServicesClient.common_billing_account_path
+    def get_transport_class(
+        cls,
+        label: str = None,
+    ) -> Type[JobsTransport]:
+        """Returns an appropriate transport class.
+
+        Args:
+            label: The name of the desired transport. If none is
+                provided, then the first transport in the registry is used.
+
+        Returns:
+            The transport class to use.
+        """
+        # If a specific transport is requested, return that one.
+        if label:
+            return cls._transport_registry[label]
+
+        # No transport is requested; return the default (that is, the first one
+        # in the dictionary).
+        return next(iter(cls._transport_registry.values()))
+
+
+class JobsClient(metaclass=JobsClientMeta):
+    """Cloud Run Job Control Plane API."""
+
+    @staticmethod
+    def _get_default_mtls_endpoint(api_endpoint):
+        """Converts api endpoint to mTLS endpoint.
+
+        Convert "*.sandbox.googleapis.com" and "*.googleapis.com" to
+        "*.mtls.sandbox.googleapis.com" and "*.mtls.googleapis.com" respectively.
+        Args:
+            api_endpoint (Optional[str]): the api endpoint to convert.
+        Returns:
+            str: converted mTLS api endpoint.
+        """
+        if not api_endpoint:
+            return api_endpoint
+
+        mtls_endpoint_re = re.compile(
+            r"(?P<name>[^.]+)(?P<mtls>\.mtls)?(?P<sandbox>\.sandbox)?(?P<googledomain>\.googleapis\.com)?"
+        )
+
+        m = mtls_endpoint_re.match(api_endpoint)
+        name, mtls, sandbox, googledomain = m.groups()
+        if mtls or not googledomain:
+            return api_endpoint
+
+        if sandbox:
+            return api_endpoint.replace(
+                "sandbox.googleapis.com", "mtls.sandbox.googleapis.com"
+            )
+
+        return api_endpoint.replace(".googleapis.com", ".mtls.googleapis.com")
+
+    DEFAULT_ENDPOINT = "run.googleapis.com"
+    DEFAULT_MTLS_ENDPOINT = _get_default_mtls_endpoint.__func__(  # type: ignore
+        DEFAULT_ENDPOINT
     )
-    parse_common_billing_account_path = staticmethod(
-        ServicesClient.parse_common_billing_account_path
-    )
-    common_folder_path = staticmethod(ServicesClient.common_folder_path)
-    parse_common_folder_path = staticmethod(ServicesClient.parse_common_folder_path)
-    common_organization_path = staticmethod(ServicesClient.common_organization_path)
-    parse_common_organization_path = staticmethod(
-        ServicesClient.parse_common_organization_path
-    )
-    common_project_path = staticmethod(ServicesClient.common_project_path)
-    parse_common_project_path = staticmethod(ServicesClient.parse_common_project_path)
-    common_location_path = staticmethod(ServicesClient.common_location_path)
-    parse_common_location_path = staticmethod(ServicesClient.parse_common_location_path)
 
     @classmethod
     def from_service_account_info(cls, info: dict, *args, **kwargs):
@@ -99,9 +139,11 @@ class ServicesAsyncClient:
             kwargs: Additional arguments to pass to the constructor.
 
         Returns:
-            ServicesAsyncClient: The constructed client.
+            JobsClient: The constructed client.
         """
-        return ServicesClient.from_service_account_info.__func__(ServicesAsyncClient, info, *args, **kwargs)  # type: ignore
+        credentials = service_account.Credentials.from_service_account_info(info)
+        kwargs["credentials"] = credentials
+        return cls(*args, **kwargs)
 
     @classmethod
     def from_service_account_file(cls, filename: str, *args, **kwargs):
@@ -115,15 +157,235 @@ class ServicesAsyncClient:
             kwargs: Additional arguments to pass to the constructor.
 
         Returns:
-            ServicesAsyncClient: The constructed client.
+            JobsClient: The constructed client.
         """
-        return ServicesClient.from_service_account_file.__func__(ServicesAsyncClient, filename, *args, **kwargs)  # type: ignore
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
+        return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
 
+    @property
+    def transport(self) -> JobsTransport:
+        """Returns the transport used by the client instance.
+
+        Returns:
+            JobsTransport: The transport used by the client
+                instance.
+        """
+        return self._transport
+
+    @staticmethod
+    def connector_path(
+        project: str,
+        location: str,
+        connector: str,
+    ) -> str:
+        """Returns a fully-qualified connector string."""
+        return "projects/{project}/locations/{location}/connectors/{connector}".format(
+            project=project,
+            location=location,
+            connector=connector,
+        )
+
+    @staticmethod
+    def parse_connector_path(path: str) -> Dict[str, str]:
+        """Parses a connector path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/connectors/(?P<connector>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def crypto_key_path(
+        project: str,
+        location: str,
+        key_ring: str,
+        crypto_key: str,
+    ) -> str:
+        """Returns a fully-qualified crypto_key string."""
+        return "projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}".format(
+            project=project,
+            location=location,
+            key_ring=key_ring,
+            crypto_key=crypto_key,
+        )
+
+    @staticmethod
+    def parse_crypto_key_path(path: str) -> Dict[str, str]:
+        """Parses a crypto_key path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/keyRings/(?P<key_ring>.+?)/cryptoKeys/(?P<crypto_key>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def execution_path(
+        project: str,
+        location: str,
+        job: str,
+        execution: str,
+    ) -> str:
+        """Returns a fully-qualified execution string."""
+        return "projects/{project}/locations/{location}/jobs/{job}/executions/{execution}".format(
+            project=project,
+            location=location,
+            job=job,
+            execution=execution,
+        )
+
+    @staticmethod
+    def parse_execution_path(path: str) -> Dict[str, str]:
+        """Parses a execution path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/jobs/(?P<job>.+?)/executions/(?P<execution>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def job_path(
+        project: str,
+        location: str,
+        job: str,
+    ) -> str:
+        """Returns a fully-qualified job string."""
+        return "projects/{project}/locations/{location}/jobs/{job}".format(
+            project=project,
+            location=location,
+            job=job,
+        )
+
+    @staticmethod
+    def parse_job_path(path: str) -> Dict[str, str]:
+        """Parses a job path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)/jobs/(?P<job>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def secret_path(
+        project: str,
+        secret: str,
+    ) -> str:
+        """Returns a fully-qualified secret string."""
+        return "projects/{project}/secrets/{secret}".format(
+            project=project,
+            secret=secret,
+        )
+
+    @staticmethod
+    def parse_secret_path(path: str) -> Dict[str, str]:
+        """Parses a secret path into its component segments."""
+        m = re.match(r"^projects/(?P<project>.+?)/secrets/(?P<secret>.+?)$", path)
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def secret_version_path(
+        project: str,
+        secret: str,
+        version: str,
+    ) -> str:
+        """Returns a fully-qualified secret_version string."""
+        return "projects/{project}/secrets/{secret}/versions/{version}".format(
+            project=project,
+            secret=secret,
+            version=version,
+        )
+
+    @staticmethod
+    def parse_secret_version_path(path: str) -> Dict[str, str]:
+        """Parses a secret_version path into its component segments."""
+        m = re.match(
+            r"^projects/(?P<project>.+?)/secrets/(?P<secret>.+?)/versions/(?P<version>.+?)$",
+            path,
+        )
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def common_billing_account_path(
+        billing_account: str,
+    ) -> str:
+        """Returns a fully-qualified billing_account string."""
+        return "billingAccounts/{billing_account}".format(
+            billing_account=billing_account,
+        )
+
+    @staticmethod
+    def parse_common_billing_account_path(path: str) -> Dict[str, str]:
+        """Parse a billing_account path into its component segments."""
+        m = re.match(r"^billingAccounts/(?P<billing_account>.+?)$", path)
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def common_folder_path(
+        folder: str,
+    ) -> str:
+        """Returns a fully-qualified folder string."""
+        return "folders/{folder}".format(
+            folder=folder,
+        )
+
+    @staticmethod
+    def parse_common_folder_path(path: str) -> Dict[str, str]:
+        """Parse a folder path into its component segments."""
+        m = re.match(r"^folders/(?P<folder>.+?)$", path)
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def common_organization_path(
+        organization: str,
+    ) -> str:
+        """Returns a fully-qualified organization string."""
+        return "organizations/{organization}".format(
+            organization=organization,
+        )
+
+    @staticmethod
+    def parse_common_organization_path(path: str) -> Dict[str, str]:
+        """Parse a organization path into its component segments."""
+        m = re.match(r"^organizations/(?P<organization>.+?)$", path)
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def common_project_path(
+        project: str,
+    ) -> str:
+        """Returns a fully-qualified project string."""
+        return "projects/{project}".format(
+            project=project,
+        )
+
+    @staticmethod
+    def parse_common_project_path(path: str) -> Dict[str, str]:
+        """Parse a project path into its component segments."""
+        m = re.match(r"^projects/(?P<project>.+?)$", path)
+        return m.groupdict() if m else {}
+
+    @staticmethod
+    def common_location_path(
+        project: str,
+        location: str,
+    ) -> str:
+        """Returns a fully-qualified location string."""
+        return "projects/{project}/locations/{location}".format(
+            project=project,
+            location=location,
+        )
+
+    @staticmethod
+    def parse_common_location_path(path: str) -> Dict[str, str]:
+        """Parse a location path into its component segments."""
+        m = re.match(r"^projects/(?P<project>.+?)/locations/(?P<location>.+?)$", path)
+        return m.groupdict() if m else {}
+
     @classmethod
     def get_mtls_endpoint_and_cert_source(
-        cls, client_options: Optional[ClientOptions] = None
+        cls, client_options: Optional[client_options_lib.ClientOptions] = None
     ):
         """Return the API endpoint and client cert source for mutual TLS.
 
@@ -155,30 +417,48 @@ class ServicesAsyncClient:
         Raises:
             google.auth.exceptions.MutualTLSChannelError: If any errors happen.
         """
-        return ServicesClient.get_mtls_endpoint_and_cert_source(client_options)  # type: ignore
+        if client_options is None:
+            client_options = client_options_lib.ClientOptions()
+        use_client_cert = os.getenv("GOOGLE_API_USE_CLIENT_CERTIFICATE", "false")
+        use_mtls_endpoint = os.getenv("GOOGLE_API_USE_MTLS_ENDPOINT", "auto")
+        if use_client_cert not in ("true", "false"):
+            raise ValueError(
+                "Environment variable `GOOGLE_API_USE_CLIENT_CERTIFICATE` must be either `true` or `false`"
+            )
+        if use_mtls_endpoint not in ("auto", "never", "always"):
+            raise MutualTLSChannelError(
+                "Environment variable `GOOGLE_API_USE_MTLS_ENDPOINT` must be `never`, `auto` or `always`"
+            )
 
-    @property
-    def transport(self) -> ServicesTransport:
-        """Returns the transport used by the client instance.
+        # Figure out the client cert source to use.
+        client_cert_source = None
+        if use_client_cert == "true":
+            if client_options.client_cert_source:
+                client_cert_source = client_options.client_cert_source
+            elif mtls.has_default_client_cert_source():
+                client_cert_source = mtls.default_client_cert_source()
 
-        Returns:
-            ServicesTransport: The transport used by the client instance.
-        """
-        return self._client.transport
+        # Figure out which api endpoint to use.
+        if client_options.api_endpoint is not None:
+            api_endpoint = client_options.api_endpoint
+        elif use_mtls_endpoint == "always" or (
+            use_mtls_endpoint == "auto" and client_cert_source
+        ):
+            api_endpoint = cls.DEFAULT_MTLS_ENDPOINT
+        else:
+            api_endpoint = cls.DEFAULT_ENDPOINT
 
-    get_transport_class = functools.partial(
-        type(ServicesClient).get_transport_class, type(ServicesClient)
-    )
+        return api_endpoint, client_cert_source
 
     def __init__(
         self,
         *,
-        credentials: ga_credentials.Credentials = None,
-        transport: Union[str, ServicesTransport] = "grpc_asyncio",
-        client_options: ClientOptions = None,
+        credentials: Optional[ga_credentials.Credentials] = None,
+        transport: Union[str, JobsTransport, None] = None,
+        client_options: Optional[Union[client_options_lib.ClientOptions, dict]] = None,
         client_info: gapic_v1.client_info.ClientInfo = DEFAULT_CLIENT_INFO,
     ) -> None:
-        """Instantiates the services client.
+        """Instantiates the jobs client.
 
         Args:
             credentials (Optional[google.auth.credentials.Credentials]): The
@@ -186,11 +466,14 @@ class ServicesAsyncClient:
                 credentials identify the application to the service; if none
                 are specified, the client will attempt to ascertain the
                 credentials from the environment.
-            transport (Union[str, ~.ServicesTransport]): The
+            transport (Union[str, JobsTransport]): The
                 transport to use. If set to None, a transport is chosen
                 automatically.
-            client_options (ClientOptions): Custom options for the client. It
-                won't take effect if a ``transport`` instance is provided.
+                NOTE: "rest" transport functionality is currently in a
+                beta state (preview). We welcome your feedback via an
+                issue in this library's source repository.
+            client_options (Optional[Union[google.api_core.client_options.ClientOptions, dict]]): Custom options for the
+                client. It won't take effect if a ``transport`` instance is provided.
                 (1) The ``api_endpoint`` property can be used to override the
                 default endpoint provided by the client. GOOGLE_API_USE_MTLS_ENDPOINT
                 environment variable can also be used to override the endpoint:
@@ -205,31 +488,83 @@ class ServicesAsyncClient:
                 not provided, the default SSL client certificate will be used if
                 present. If GOOGLE_API_USE_CLIENT_CERTIFICATE is "false" or not
                 set, no client certificate will be used.
+            client_info (google.api_core.gapic_v1.client_info.ClientInfo):
+                The client info used to send a user-agent string along with
+                API requests. If ``None``, then default info will be used.
+                Generally, you only need to set this if you're developing
+                your own client library.
 
         Raises:
-            google.auth.exceptions.MutualTlsChannelError: If mutual TLS transport
+            google.auth.exceptions.MutualTLSChannelError: If mutual TLS transport
                 creation failed for any reason.
         """
-        self._client = ServicesClient(
-            credentials=credentials,
-            transport=transport,
-            client_options=client_options,
-            client_info=client_info,
+        if isinstance(client_options, dict):
+            client_options = client_options_lib.from_dict(client_options)
+        if client_options is None:
+            client_options = client_options_lib.ClientOptions()
+        client_options = cast(client_options_lib.ClientOptions, client_options)
+
+        api_endpoint, client_cert_source_func = self.get_mtls_endpoint_and_cert_source(
+            client_options
         )
 
-    async def create_service(
+        api_key_value = getattr(client_options, "api_key", None)
+        if api_key_value and credentials:
+            raise ValueError(
+                "client_options.api_key and credentials are mutually exclusive"
+            )
+
+        # Save or instantiate the transport.
+        # Ordinarily, we provide the transport, but allowing a custom transport
+        # instance provides an extensibility point for unusual situations.
+        if isinstance(transport, JobsTransport):
+            # transport is a JobsTransport instance.
+            if credentials or client_options.credentials_file or api_key_value:
+                raise ValueError(
+                    "When providing a transport instance, "
+                    "provide its credentials directly."
+                )
+            if client_options.scopes:
+                raise ValueError(
+                    "When providing a transport instance, provide its scopes "
+                    "directly."
+                )
+            self._transport = transport
+        else:
+            import google.auth._default  # type: ignore
+
+            if api_key_value and hasattr(
+                google.auth._default, "get_api_key_credentials"
+            ):
+                credentials = google.auth._default.get_api_key_credentials(
+                    api_key_value
+                )
+
+            Transport = type(self).get_transport_class(transport)
+            self._transport = Transport(
+                credentials=credentials,
+                credentials_file=client_options.credentials_file,
+                host=api_endpoint,
+                scopes=client_options.scopes,
+                client_cert_source_for_mtls=client_cert_source_func,
+                quota_project_id=client_options.quota_project_id,
+                client_info=client_info,
+                always_use_jwt_access=True,
+                api_audience=client_options.api_audience,
+            )
+
+    def create_job(
         self,
-        request: Union[gcr_service.CreateServiceRequest, dict] = None,
+        request: Union[gcr_job.CreateJobRequest, dict] = None,
         *,
         parent: str = None,
-        service: gcr_service.Service = None,
-        service_id: str = None,
+        job: gcr_job.Job = None,
+        job_id: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> operation_async.AsyncOperation:
-        r"""Creates a new Service in a given project and
-        location.
+    ) -> operation.Operation:
+        r"""Creates a Job.
 
         .. code-block:: python
 
@@ -242,55 +577,52 @@ class ServicesAsyncClient:
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            async def sample_create_service():
+            def sample_create_job():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
-                request = run_v2.CreateServiceRequest(
+                job = run_v2.Job()
+                job.template.template.max_retries = 1187
+
+                request = run_v2.CreateJobRequest(
                     parent="parent_value",
-                    service_id="service_id_value",
+                    job=job,
+                    job_id="job_id_value",
                 )
 
                 # Make the request
-                operation = client.create_service(request=request)
+                operation = client.create_job(request=request)
 
                 print("Waiting for operation to complete...")
 
-                response = await operation.result()
+                response = operation.result()
 
                 # Handle the response
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.CreateServiceRequest, dict]):
-                The request object. Request message for creating a
-                Service.
-            parent (:class:`str`):
+            request (Union[google.cloud.run_v2.types.CreateJobRequest, dict]):
+                The request object. Request message for creating a Job.
+            parent (str):
                 Required. The location and project in
-                which this service should be created.
+                which this Job should be created.
                 Format:
                 projects/{project}/locations/{location}
-                Only lowercase characters, digits, and
-                hyphens.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
                 should not be set.
-            service (:class:`google.cloud.run_v2.types.Service`):
-                Required. The Service instance to
-                create.
-
-                This corresponds to the ``service`` field
+            job (google.cloud.run_v2.types.Job):
+                Required. The Job instance to create.
+                This corresponds to the ``job`` field
                 on the ``request`` instance; if ``request`` is provided, this
                 should not be set.
-            service_id (:class:`str`):
-                Required. The unique identifier for the Service. It must
-                begin with letter, and may not end with hyphen; must
-                contain fewer than 50 characters. The name of the
-                service becomes {parent}/services/{service_id}.
+            job_id (str):
+                Required. The unique identifier for the Job. The name of
+                the job becomes {parent}/jobs/{job_id}.
 
-                This corresponds to the ``service_id`` field
+                This corresponds to the ``job_id`` field
                 on the ``request`` instance; if ``request`` is provided, this
                 should not be set.
             retry (google.api_core.retry.Retry): Designation of what errors, if any,
@@ -300,46 +632,42 @@ class ServicesAsyncClient:
                 sent along with the request as metadata.
 
         Returns:
-            google.api_core.operation_async.AsyncOperation:
+            google.api_core.operation.Operation:
                 An object representing a long-running operation.
 
-                The result type for the operation will be :class:`google.cloud.run_v2.types.Service` Service acts as a top-level container that manages a set of
-                   configurations and revision templates which implement
-                   a network service. Service exists to provide a
-                   singular abstraction which can be access controlled,
-                   reasoned about, and which encapsulates software
-                   lifecycle decisions such as rollout policy and team
-                   resource ownership.
+                The result type for the operation will be :class:`google.cloud.run_v2.types.Job` Job represents the configuration of a single job. A job an immutable resource
+                   that references a container image which is run to
+                   completion.
 
         """
         # Create or coerce a protobuf request object.
         # Quick check: If we got a request object, we should *not* have
         # gotten any keyword arguments that map to the request.
-        has_flattened_params = any([parent, service, service_id])
+        has_flattened_params = any([parent, job, job_id])
         if request is not None and has_flattened_params:
             raise ValueError(
                 "If the `request` argument is set, then none of "
                 "the individual field arguments should be set."
             )
 
-        request = gcr_service.CreateServiceRequest(request)
-
-        # If we have keyword arguments corresponding to fields on the
-        # request, apply these.
-        if parent is not None:
-            request.parent = parent
-        if service is not None:
-            request.service = service
-        if service_id is not None:
-            request.service_id = service_id
+        # Minor optimization to avoid making a copy if the user passes
+        # in a gcr_job.CreateJobRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, gcr_job.CreateJobRequest):
+            request = gcr_job.CreateJobRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if parent is not None:
+                request.parent = parent
+            if job is not None:
+                request.job = job
+            if job_id is not None:
+                request.job_id = job_id
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.create_service,
-            default_timeout=15.0,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.create_job]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -348,7 +676,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -356,26 +684,26 @@ class ServicesAsyncClient:
         )
 
         # Wrap the response in an operation future.
-        response = operation_async.from_gapic(
+        response = operation.from_gapic(
             response,
-            self._client._transport.operations_client,
-            gcr_service.Service,
-            metadata_type=gcr_service.Service,
+            self._transport.operations_client,
+            gcr_job.Job,
+            metadata_type=gcr_job.Job,
         )
 
         # Done; return the response.
         return response
 
-    async def get_service(
+    def get_job(
         self,
-        request: Union[service.GetServiceRequest, dict] = None,
+        request: Union[job.GetJobRequest, dict] = None,
         *,
         name: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> service.Service:
-        r"""Gets information about a Service.
+    ) -> job.Job:
+        r"""Gets information about a Job.
 
         .. code-block:: python
 
@@ -388,29 +716,29 @@ class ServicesAsyncClient:
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            async def sample_get_service():
+            def sample_get_job():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
-                request = run_v2.GetServiceRequest(
+                request = run_v2.GetJobRequest(
                     name="name_value",
                 )
 
                 # Make the request
-                response = await client.get_service(request=request)
+                response = client.get_job(request=request)
 
                 # Handle the response
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.GetServiceRequest, dict]):
-                The request object. Request message for obtaining a
-                Service by its full name.
-            name (:class:`str`):
-                Required. The full name of the
-                Service. Format:
-                projects/{project}/locations/{location}/services/{service}
+            request (Union[google.cloud.run_v2.types.GetJobRequest, dict]):
+                The request object. Request message for obtaining a Job
+                by its full name.
+            name (str):
+                Required. The full name of the Job.
+                Format:
+                projects/{project}/locations/{location}/jobs/{job}
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -422,16 +750,11 @@ class ServicesAsyncClient:
                 sent along with the request as metadata.
 
         Returns:
-            google.cloud.run_v2.types.Service:
-                Service acts as a top-level container
-                that manages a set of configurations and
-                revision templates which implement a
-                network service. Service exists to
-                provide a singular abstraction which can
-                be access controlled, reasoned about,
-                and which encapsulates software
-                lifecycle decisions such as rollout
-                policy and team resource ownership.
+            google.cloud.run_v2.types.Job:
+                Job represents the configuration of a
+                single job. A job an immutable resource
+                that references a container image which
+                is run to completion.
 
         """
         # Create or coerce a protobuf request object.
@@ -444,29 +767,20 @@ class ServicesAsyncClient:
                 "the individual field arguments should be set."
             )
 
-        request = service.GetServiceRequest(request)
-
-        # If we have keyword arguments corresponding to fields on the
-        # request, apply these.
-        if name is not None:
-            request.name = name
+        # Minor optimization to avoid making a copy if the user passes
+        # in a job.GetJobRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, job.GetJobRequest):
+            request = job.GetJobRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if name is not None:
+                request.name = name
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.get_service,
-            default_retry=retries.Retry(
-                initial=1.0,
-                maximum=10.0,
-                multiplier=1.3,
-                predicate=retries.if_exception_type(
-                    core_exceptions.ServiceUnavailable,
-                ),
-                deadline=10.0,
-            ),
-            default_timeout=10.0,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.get_job]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -475,7 +789,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -485,16 +799,16 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def list_services(
+    def list_jobs(
         self,
-        request: Union[service.ListServicesRequest, dict] = None,
+        request: Union[job.ListJobsRequest, dict] = None,
         *,
         parent: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> pagers.ListServicesAsyncPager:
-        r"""Lists Services.
+    ) -> pagers.ListJobsPager:
+        r"""Lists Jobs.
 
         .. code-block:: python
 
@@ -507,31 +821,29 @@ class ServicesAsyncClient:
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            async def sample_list_services():
+            def sample_list_jobs():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
-                request = run_v2.ListServicesRequest(
+                request = run_v2.ListJobsRequest(
                     parent="parent_value",
                 )
 
                 # Make the request
-                page_result = client.list_services(request=request)
+                page_result = client.list_jobs(request=request)
 
                 # Handle the response
-                async for response in page_result:
+                for response in page_result:
                     print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.ListServicesRequest, dict]):
+            request (Union[google.cloud.run_v2.types.ListJobsRequest, dict]):
                 The request object. Request message for retrieving a
-                list of Services.
-            parent (:class:`str`):
+                list of Jobs.
+            parent (str):
                 Required. The location and project to
-                list resources on. Location must be a
-                valid GCP region, and may not be the "-"
-                wildcard. Format:
+                list resources on. Format:
                 projects/{project}/locations/{location}
 
                 This corresponds to the ``parent`` field
@@ -544,9 +856,9 @@ class ServicesAsyncClient:
                 sent along with the request as metadata.
 
         Returns:
-            google.cloud.run_v2.services.services.pagers.ListServicesAsyncPager:
+            google.cloud.run_v2.services.jobs.pagers.ListJobsPager:
                 Response message containing a list of
-                Services.
+                Jobs.
                 Iterating over this object will yield
                 results and resolve additional pages
                 automatically.
@@ -562,29 +874,20 @@ class ServicesAsyncClient:
                 "the individual field arguments should be set."
             )
 
-        request = service.ListServicesRequest(request)
-
-        # If we have keyword arguments corresponding to fields on the
-        # request, apply these.
-        if parent is not None:
-            request.parent = parent
+        # Minor optimization to avoid making a copy if the user passes
+        # in a job.ListJobsRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, job.ListJobsRequest):
+            request = job.ListJobsRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if parent is not None:
+                request.parent = parent
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.list_services,
-            default_retry=retries.Retry(
-                initial=1.0,
-                maximum=10.0,
-                multiplier=1.3,
-                predicate=retries.if_exception_type(
-                    core_exceptions.ServiceUnavailable,
-                ),
-                deadline=10.0,
-            ),
-            default_timeout=10.0,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.list_jobs]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -593,7 +896,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -601,8 +904,8 @@ class ServicesAsyncClient:
         )
 
         # This method is paged; wrap the response in a pager, which provides
-        # an `__aiter__` convenience method.
-        response = pagers.ListServicesAsyncPager(
+        # an `__iter__` convenience method.
+        response = pagers.ListJobsPager(
             method=rpc,
             request=request,
             response=response,
@@ -612,16 +915,16 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def update_service(
+    def update_job(
         self,
-        request: Union[gcr_service.UpdateServiceRequest, dict] = None,
+        request: Union[gcr_job.UpdateJobRequest, dict] = None,
         *,
-        service: gcr_service.Service = None,
+        job: gcr_job.Job = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> operation_async.AsyncOperation:
-        r"""Updates a Service.
+    ) -> operation.Operation:
+        r"""Updates a Job.
 
         .. code-block:: python
 
@@ -634,31 +937,34 @@ class ServicesAsyncClient:
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            async def sample_update_service():
+            def sample_update_job():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
-                request = run_v2.UpdateServiceRequest(
+                job = run_v2.Job()
+                job.template.template.max_retries = 1187
+
+                request = run_v2.UpdateJobRequest(
+                    job=job,
                 )
 
                 # Make the request
-                operation = client.update_service(request=request)
+                operation = client.update_job(request=request)
 
                 print("Waiting for operation to complete...")
 
-                response = await operation.result()
+                response = operation.result()
 
                 # Handle the response
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.UpdateServiceRequest, dict]):
-                The request object. Request message for updating a
-                service.
-            service (:class:`google.cloud.run_v2.types.Service`):
-                Required. The Service to be updated.
-                This corresponds to the ``service`` field
+            request (Union[google.cloud.run_v2.types.UpdateJobRequest, dict]):
+                The request object. Request message for updating a Job.
+            job (google.cloud.run_v2.types.Job):
+                Required. The Job to be updated.
+                This corresponds to the ``job`` field
                 on the ``request`` instance; if ``request`` is provided, this
                 should not be set.
             retry (google.api_core.retry.Retry): Designation of what errors, if any,
@@ -668,53 +974,47 @@ class ServicesAsyncClient:
                 sent along with the request as metadata.
 
         Returns:
-            google.api_core.operation_async.AsyncOperation:
+            google.api_core.operation.Operation:
                 An object representing a long-running operation.
 
-                The result type for the operation will be :class:`google.cloud.run_v2.types.Service` Service acts as a top-level container that manages a set of
-                   configurations and revision templates which implement
-                   a network service. Service exists to provide a
-                   singular abstraction which can be access controlled,
-                   reasoned about, and which encapsulates software
-                   lifecycle decisions such as rollout policy and team
-                   resource ownership.
+                The result type for the operation will be :class:`google.cloud.run_v2.types.Job` Job represents the configuration of a single job. A job an immutable resource
+                   that references a container image which is run to
+                   completion.
 
         """
         # Create or coerce a protobuf request object.
         # Quick check: If we got a request object, we should *not* have
         # gotten any keyword arguments that map to the request.
-        has_flattened_params = any([service])
+        has_flattened_params = any([job])
         if request is not None and has_flattened_params:
             raise ValueError(
                 "If the `request` argument is set, then none of "
                 "the individual field arguments should be set."
             )
 
-        request = gcr_service.UpdateServiceRequest(request)
-
-        # If we have keyword arguments corresponding to fields on the
-        # request, apply these.
-        if service is not None:
-            request.service = service
+        # Minor optimization to avoid making a copy if the user passes
+        # in a gcr_job.UpdateJobRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, gcr_job.UpdateJobRequest):
+            request = gcr_job.UpdateJobRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if job is not None:
+                request.job = job
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.update_service,
-            default_timeout=15.0,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.update_job]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
         metadata = tuple(metadata) + (
-            gapic_v1.routing_header.to_grpc_metadata(
-                (("service.name", request.service.name),)
-            ),
+            gapic_v1.routing_header.to_grpc_metadata((("job.name", request.job.name),)),
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -722,28 +1022,26 @@ class ServicesAsyncClient:
         )
 
         # Wrap the response in an operation future.
-        response = operation_async.from_gapic(
+        response = operation.from_gapic(
             response,
-            self._client._transport.operations_client,
-            gcr_service.Service,
-            metadata_type=gcr_service.Service,
+            self._transport.operations_client,
+            gcr_job.Job,
+            metadata_type=gcr_job.Job,
         )
 
         # Done; return the response.
         return response
 
-    async def delete_service(
+    def delete_job(
         self,
-        request: Union[service.DeleteServiceRequest, dict] = None,
+        request: Union[job.DeleteJobRequest, dict] = None,
         *,
         name: str = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
-    ) -> operation_async.AsyncOperation:
-        r"""Deletes a Service.
-        This will cause the Service to stop serving traffic and
-        will delete all revisions.
+    ) -> operation.Operation:
+        r"""Deletes a Job.
 
         .. code-block:: python
 
@@ -756,33 +1054,33 @@ class ServicesAsyncClient:
             #   https://googleapis.dev/python/google-api-core/latest/client_options.html
             from google.cloud import run_v2
 
-            async def sample_delete_service():
+            def sample_delete_job():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
-                request = run_v2.DeleteServiceRequest(
+                request = run_v2.DeleteJobRequest(
                     name="name_value",
                 )
 
                 # Make the request
-                operation = client.delete_service(request=request)
+                operation = client.delete_job(request=request)
 
                 print("Waiting for operation to complete...")
 
-                response = await operation.result()
+                response = operation.result()
 
                 # Handle the response
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.DeleteServiceRequest, dict]):
-                The request object. Request message to delete a Service
-                by its full name.
-            name (:class:`str`):
-                Required. The full name of the
-                Service. Format:
-                projects/{project}/locations/{location}/services/{service}
+            request (Union[google.cloud.run_v2.types.DeleteJobRequest, dict]):
+                The request object. Request message to delete a Job by
+                its full name.
+            name (str):
+                Required. The full name of the Job.
+                Format:
+                projects/{project}/locations/{location}/jobs/{job}
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -794,16 +1092,12 @@ class ServicesAsyncClient:
                 sent along with the request as metadata.
 
         Returns:
-            google.api_core.operation_async.AsyncOperation:
+            google.api_core.operation.Operation:
                 An object representing a long-running operation.
 
-                The result type for the operation will be :class:`google.cloud.run_v2.types.Service` Service acts as a top-level container that manages a set of
-                   configurations and revision templates which implement
-                   a network service. Service exists to provide a
-                   singular abstraction which can be access controlled,
-                   reasoned about, and which encapsulates software
-                   lifecycle decisions such as rollout policy and team
-                   resource ownership.
+                The result type for the operation will be :class:`google.cloud.run_v2.types.Job` Job represents the configuration of a single job. A job an immutable resource
+                   that references a container image which is run to
+                   completion.
 
         """
         # Create or coerce a protobuf request object.
@@ -816,20 +1110,20 @@ class ServicesAsyncClient:
                 "the individual field arguments should be set."
             )
 
-        request = service.DeleteServiceRequest(request)
-
-        # If we have keyword arguments corresponding to fields on the
-        # request, apply these.
-        if name is not None:
-            request.name = name
+        # Minor optimization to avoid making a copy if the user passes
+        # in a job.DeleteJobRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, job.DeleteJobRequest):
+            request = job.DeleteJobRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if name is not None:
+                request.name = name
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.delete_service,
-            default_timeout=10.0,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.delete_job]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -838,7 +1132,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -846,17 +1140,135 @@ class ServicesAsyncClient:
         )
 
         # Wrap the response in an operation future.
-        response = operation_async.from_gapic(
+        response = operation.from_gapic(
             response,
-            self._client._transport.operations_client,
-            service.Service,
-            metadata_type=service.Service,
+            self._transport.operations_client,
+            job.Job,
+            metadata_type=job.Job,
         )
 
         # Done; return the response.
         return response
 
-    async def get_iam_policy(
+    def run_job(
+        self,
+        request: Union[job.RunJobRequest, dict] = None,
+        *,
+        name: str = None,
+        retry: OptionalRetry = gapic_v1.method.DEFAULT,
+        timeout: float = None,
+        metadata: Sequence[Tuple[str, str]] = (),
+    ) -> operation.Operation:
+        r"""Triggers creation of a new Execution of this Job.
+
+        .. code-block:: python
+
+            # This snippet has been automatically generated and should be regarded as a
+            # code template only.
+            # It will require modifications to work:
+            # - It may require correct/in-range values for request initialization.
+            # - It may require specifying regional endpoints when creating the service
+            #   client as shown in:
+            #   https://googleapis.dev/python/google-api-core/latest/client_options.html
+            from google.cloud import run_v2
+
+            def sample_run_job():
+                # Create a client
+                client = run_v2.JobsClient()
+
+                # Initialize request argument(s)
+                request = run_v2.RunJobRequest(
+                    name="name_value",
+                )
+
+                # Make the request
+                operation = client.run_job(request=request)
+
+                print("Waiting for operation to complete...")
+
+                response = operation.result()
+
+                # Handle the response
+                print(response)
+
+        Args:
+            request (Union[google.cloud.run_v2.types.RunJobRequest, dict]):
+                The request object. Request message to create a new
+                Execution of a Job.
+            name (str):
+                Required. The full name of the Job.
+                Format:
+                projects/{project}/locations/{location}/jobs/{job}
+
+                This corresponds to the ``name`` field
+                on the ``request`` instance; if ``request`` is provided, this
+                should not be set.
+            retry (google.api_core.retry.Retry): Designation of what errors, if any,
+                should be retried.
+            timeout (float): The timeout for this request.
+            metadata (Sequence[Tuple[str, str]]): Strings which should be
+                sent along with the request as metadata.
+
+        Returns:
+            google.api_core.operation.Operation:
+                An object representing a long-running operation.
+
+                The result type for the operation will be :class:`google.cloud.run_v2.types.Execution` Execution represents the configuration of a single execution. A execution an
+                   immutable resource that references a container image
+                   which is run to completion.
+
+        """
+        # Create or coerce a protobuf request object.
+        # Quick check: If we got a request object, we should *not* have
+        # gotten any keyword arguments that map to the request.
+        has_flattened_params = any([name])
+        if request is not None and has_flattened_params:
+            raise ValueError(
+                "If the `request` argument is set, then none of "
+                "the individual field arguments should be set."
+            )
+
+        # Minor optimization to avoid making a copy if the user passes
+        # in a job.RunJobRequest.
+        # There's no risk of modifying the input as we've already verified
+        # there are no flattened fields.
+        if not isinstance(request, job.RunJobRequest):
+            request = job.RunJobRequest(request)
+            # If we have keyword arguments corresponding to fields on the
+            # request, apply these.
+            if name is not None:
+                request.name = name
+
+        # Wrap the RPC method; this adds retry and timeout information,
+        # and friendly error handling.
+        rpc = self._transport._wrapped_methods[self._transport.run_job]
+
+        # Certain fields should be provided within the metadata header;
+        # add these here.
+        metadata = tuple(metadata) + (
+            gapic_v1.routing_header.to_grpc_metadata((("name", request.name),)),
+        )
+
+        # Send the request.
+        response = rpc(
+            request,
+            retry=retry,
+            timeout=timeout,
+            metadata=metadata,
+        )
+
+        # Wrap the response in an operation future.
+        response = operation.from_gapic(
+            response,
+            self._transport.operations_client,
+            execution.Execution,
+            metadata_type=execution.Execution,
+        )
+
+        # Done; return the response.
+        return response
+
+    def get_iam_policy(
         self,
         request: Union[iam_policy_pb2.GetIamPolicyRequest, dict] = None,
         *,
@@ -864,9 +1276,9 @@ class ServicesAsyncClient:
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
-        r"""Gets the IAM Access Control policy currently in
-        effect for the given Cloud Run Service. This result does
-        not include any inherited policies.
+        r"""Get the IAM Access Control policy currently in effect
+        for the given Job. This result does not include any
+        inherited policies.
 
         .. code-block:: python
 
@@ -880,9 +1292,9 @@ class ServicesAsyncClient:
             from google.cloud import run_v2
             from google.iam.v1 import iam_policy_pb2  # type: ignore
 
-            async def sample_get_iam_policy():
+            def sample_get_iam_policy():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
                 request = iam_policy_pb2.GetIamPolicyRequest(
@@ -890,7 +1302,7 @@ class ServicesAsyncClient:
                 )
 
                 # Make the request
-                response = await client.get_iam_policy(request=request)
+                response = client.get_iam_policy(request=request)
 
                 # Handle the response
                 print(response)
@@ -971,18 +1383,17 @@ class ServicesAsyncClient:
 
         """
         # Create or coerce a protobuf request object.
-        # The request isn't a proto-plus wrapped type,
-        # so it must be constructed via keyword expansion.
         if isinstance(request, dict):
+            # The request isn't a proto-plus wrapped type,
+            # so it must be constructed via keyword expansion.
             request = iam_policy_pb2.GetIamPolicyRequest(**request)
+        elif not request:
+            # Null request, just make one.
+            request = iam_policy_pb2.GetIamPolicyRequest()
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.get_iam_policy,
-            default_timeout=None,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.get_iam_policy]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -991,7 +1402,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -1001,7 +1412,7 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def set_iam_policy(
+    def set_iam_policy(
         self,
         request: Union[iam_policy_pb2.SetIamPolicyRequest, dict] = None,
         *,
@@ -1010,7 +1421,7 @@ class ServicesAsyncClient:
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
         r"""Sets the IAM Access control policy for the specified
-        Service. Overwrites any existing policy.
+        Job. Overwrites any existing policy.
 
         .. code-block:: python
 
@@ -1024,9 +1435,9 @@ class ServicesAsyncClient:
             from google.cloud import run_v2
             from google.iam.v1 import iam_policy_pb2  # type: ignore
 
-            async def sample_set_iam_policy():
+            def sample_set_iam_policy():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
                 request = iam_policy_pb2.SetIamPolicyRequest(
@@ -1034,7 +1445,7 @@ class ServicesAsyncClient:
                 )
 
                 # Make the request
-                response = await client.set_iam_policy(request=request)
+                response = client.set_iam_policy(request=request)
 
                 # Handle the response
                 print(response)
@@ -1115,18 +1526,17 @@ class ServicesAsyncClient:
 
         """
         # Create or coerce a protobuf request object.
-        # The request isn't a proto-plus wrapped type,
-        # so it must be constructed via keyword expansion.
         if isinstance(request, dict):
+            # The request isn't a proto-plus wrapped type,
+            # so it must be constructed via keyword expansion.
             request = iam_policy_pb2.SetIamPolicyRequest(**request)
+        elif not request:
+            # Null request, just make one.
+            request = iam_policy_pb2.SetIamPolicyRequest()
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.set_iam_policy,
-            default_timeout=None,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.set_iam_policy]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -1135,7 +1545,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -1145,7 +1555,7 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def test_iam_permissions(
+    def test_iam_permissions(
         self,
         request: Union[iam_policy_pb2.TestIamPermissionsRequest, dict] = None,
         *,
@@ -1170,9 +1580,9 @@ class ServicesAsyncClient:
             from google.cloud import run_v2
             from google.iam.v1 import iam_policy_pb2  # type: ignore
 
-            async def sample_test_iam_permissions():
+            def sample_test_iam_permissions():
                 # Create a client
-                client = run_v2.ServicesAsyncClient()
+                client = run_v2.JobsClient()
 
                 # Initialize request argument(s)
                 request = iam_policy_pb2.TestIamPermissionsRequest(
@@ -1181,7 +1591,7 @@ class ServicesAsyncClient:
                 )
 
                 # Make the request
-                response = await client.test_iam_permissions(request=request)
+                response = client.test_iam_permissions(request=request)
 
                 # Handle the response
                 print(response)
@@ -1201,18 +1611,17 @@ class ServicesAsyncClient:
                 Response message for TestIamPermissions method.
         """
         # Create or coerce a protobuf request object.
-        # The request isn't a proto-plus wrapped type,
-        # so it must be constructed via keyword expansion.
         if isinstance(request, dict):
+            # The request isn't a proto-plus wrapped type,
+            # so it must be constructed via keyword expansion.
             request = iam_policy_pb2.TestIamPermissionsRequest(**request)
+        elif not request:
+            # Null request, just make one.
+            request = iam_policy_pb2.TestIamPermissionsRequest()
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method_async.wrap_method(
-            self._client._transport.test_iam_permissions,
-            default_timeout=None,
-            client_info=DEFAULT_CLIENT_INFO,
-        )
+        rpc = self._transport._wrapped_methods[self._transport.test_iam_permissions]
 
         # Certain fields should be provided within the metadata header;
         # add these here.
@@ -1221,7 +1630,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -1231,7 +1640,20 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def list_operations(
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """Releases underlying transport's resources.
+
+        .. warning::
+            ONLY use as a context manager if the transport is NOT shared
+            with other clients! Exiting the with block will CLOSE the transport
+            and may cause errors in other clients!
+        """
+        self.transport.close()
+
+    def list_operations(
         self,
         request: operations_pb2.ListOperationsRequest = None,
         *,
@@ -1263,7 +1685,7 @@ class ServicesAsyncClient:
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
         rpc = gapic_v1.method.wrap_method(
-            self._client._transport.list_operations,
+            self._transport.list_operations,
             default_timeout=None,
             client_info=DEFAULT_CLIENT_INFO,
         )
@@ -1275,7 +1697,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -1285,7 +1707,7 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def get_operation(
+    def get_operation(
         self,
         request: operations_pb2.GetOperationRequest = None,
         *,
@@ -1317,7 +1739,7 @@ class ServicesAsyncClient:
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
         rpc = gapic_v1.method.wrap_method(
-            self._client._transport.get_operation,
+            self._transport.get_operation,
             default_timeout=None,
             client_info=DEFAULT_CLIENT_INFO,
         )
@@ -1329,7 +1751,7 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        response = await rpc(
+        response = rpc(
             request,
             retry=retry,
             timeout=timeout,
@@ -1339,7 +1761,7 @@ class ServicesAsyncClient:
         # Done; return the response.
         return response
 
-    async def delete_operation(
+    def delete_operation(
         self,
         request: operations_pb2.DeleteOperationRequest = None,
         *,
@@ -1375,7 +1797,7 @@ class ServicesAsyncClient:
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
         rpc = gapic_v1.method.wrap_method(
-            self._client._transport.delete_operation,
+            self._transport.delete_operation,
             default_timeout=None,
             client_info=DEFAULT_CLIENT_INFO,
         )
@@ -1387,18 +1809,12 @@ class ServicesAsyncClient:
         )
 
         # Send the request.
-        await rpc(
+        rpc(
             request,
             retry=retry,
             timeout=timeout,
             metadata=metadata,
         )
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        await self.transport.close()
 
 
 try:
@@ -1411,4 +1827,4 @@ except pkg_resources.DistributionNotFound:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo()
 
 
-__all__ = ("ServicesAsyncClient",)
+__all__ = ("JobsClient",)

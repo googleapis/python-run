@@ -17,7 +17,6 @@ import warnings
 from typing import Callable, Dict, Optional, Sequence, Tuple, Union
 
 from google.api_core import grpc_helpers
-from google.api_core import operations_v1
 from google.api_core import gapic_v1
 import google.auth  # type: ignore
 from google.auth import credentials as ga_credentials  # type: ignore
@@ -26,16 +25,15 @@ from google.auth.transport.grpc import SslCredentials  # type: ignore
 import grpc  # type: ignore
 
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.types import revision
+from google.cloud.run_v2.types import task
 from google.longrunning import operations_pb2
-from google.longrunning import operations_pb2  # type: ignore
-from .base import RevisionsTransport, DEFAULT_CLIENT_INFO
+from .base import TasksTransport, DEFAULT_CLIENT_INFO
 
 
-class RevisionsGrpcTransport(RevisionsTransport):
-    """gRPC backend transport for Revisions.
+class TasksGrpcTransport(TasksTransport):
+    """gRPC backend transport for Tasks.
 
-    Cloud Run Revision Control Plane API.
+    Cloud Run Task Control Plane API.
 
     This class defines the same methods as the primary client, so the
     primary client can load the underlying transport implementation
@@ -115,7 +113,6 @@ class RevisionsGrpcTransport(RevisionsTransport):
         self._grpc_channel = None
         self._ssl_channel_credentials = ssl_channel_credentials
         self._stubs: Dict[str, Callable] = {}
-        self._operations_client: Optional[operations_v1.OperationsClient] = None
 
         if api_mtls_endpoint:
             warnings.warn("api_mtls_endpoint is deprecated", DeprecationWarning)
@@ -235,30 +232,14 @@ class RevisionsGrpcTransport(RevisionsTransport):
         return self._grpc_channel
 
     @property
-    def operations_client(self) -> operations_v1.OperationsClient:
-        """Create the client designed to process long-running operations.
+    def get_task(self) -> Callable[[task.GetTaskRequest], task.Task]:
+        r"""Return a callable for the get task method over gRPC.
 
-        This property caches on the instance; repeated calls return the same
-        client.
-        """
-        # Quick check: Only create a new client if we do not already have one.
-        if self._operations_client is None:
-            self._operations_client = operations_v1.OperationsClient(self.grpc_channel)
-
-        # Return the client from cache.
-        return self._operations_client
-
-    @property
-    def get_revision(
-        self,
-    ) -> Callable[[revision.GetRevisionRequest], revision.Revision]:
-        r"""Return a callable for the get revision method over gRPC.
-
-        Gets information about a Revision.
+        Gets information about a Task.
 
         Returns:
-            Callable[[~.GetRevisionRequest],
-                    ~.Revision]:
+            Callable[[~.GetTaskRequest],
+                    ~.Task]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -266,26 +247,23 @@ class RevisionsGrpcTransport(RevisionsTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "get_revision" not in self._stubs:
-            self._stubs["get_revision"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/GetRevision",
-                request_serializer=revision.GetRevisionRequest.serialize,
-                response_deserializer=revision.Revision.deserialize,
+        if "get_task" not in self._stubs:
+            self._stubs["get_task"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Tasks/GetTask",
+                request_serializer=task.GetTaskRequest.serialize,
+                response_deserializer=task.Task.deserialize,
             )
-        return self._stubs["get_revision"]
+        return self._stubs["get_task"]
 
     @property
-    def list_revisions(
-        self,
-    ) -> Callable[[revision.ListRevisionsRequest], revision.ListRevisionsResponse]:
-        r"""Return a callable for the list revisions method over gRPC.
+    def list_tasks(self) -> Callable[[task.ListTasksRequest], task.ListTasksResponse]:
+        r"""Return a callable for the list tasks method over gRPC.
 
-        Lists Revisions from a given Service, or from a given
-        location.
+        Lists Tasks from an Execution of a Job.
 
         Returns:
-            Callable[[~.ListRevisionsRequest],
-                    ~.ListRevisionsResponse]:
+            Callable[[~.ListTasksRequest],
+                    ~.ListTasksResponse]:
                 A function that, when called, will call the underlying RPC
                 on the server.
         """
@@ -293,39 +271,13 @@ class RevisionsGrpcTransport(RevisionsTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "list_revisions" not in self._stubs:
-            self._stubs["list_revisions"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/ListRevisions",
-                request_serializer=revision.ListRevisionsRequest.serialize,
-                response_deserializer=revision.ListRevisionsResponse.deserialize,
+        if "list_tasks" not in self._stubs:
+            self._stubs["list_tasks"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Tasks/ListTasks",
+                request_serializer=task.ListTasksRequest.serialize,
+                response_deserializer=task.ListTasksResponse.deserialize,
             )
-        return self._stubs["list_revisions"]
-
-    @property
-    def delete_revision(
-        self,
-    ) -> Callable[[revision.DeleteRevisionRequest], operations_pb2.Operation]:
-        r"""Return a callable for the delete revision method over gRPC.
-
-        Deletes a Revision.
-
-        Returns:
-            Callable[[~.DeleteRevisionRequest],
-                    ~.Operation]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "delete_revision" not in self._stubs:
-            self._stubs["delete_revision"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Revisions/DeleteRevision",
-                request_serializer=revision.DeleteRevisionRequest.serialize,
-                response_deserializer=operations_pb2.Operation.FromString,
-            )
-        return self._stubs["delete_revision"]
+        return self._stubs["list_tasks"]
 
     def close(self):
         self.grpc_channel.close()
@@ -388,4 +340,4 @@ class RevisionsGrpcTransport(RevisionsTransport):
         return "grpc"
 
 
-__all__ = ("RevisionsGrpcTransport",)
+__all__ = ("TasksGrpcTransport",)

@@ -26,20 +26,17 @@ import grpc  # type: ignore
 from grpc.experimental import aio  # type: ignore
 
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.types import service
-from google.cloud.run_v2.types import service as gcr_service
-from google.iam.v1 import iam_policy_pb2  # type: ignore
-from google.iam.v1 import policy_pb2  # type: ignore
+from google.cloud.run_v2.types import execution
 from google.longrunning import operations_pb2
 from google.longrunning import operations_pb2  # type: ignore
-from .base import ServicesTransport, DEFAULT_CLIENT_INFO
-from .grpc import ServicesGrpcTransport
+from .base import ExecutionsTransport, DEFAULT_CLIENT_INFO
+from .grpc import ExecutionsGrpcTransport
 
 
-class ServicesGrpcAsyncIOTransport(ServicesTransport):
-    """gRPC AsyncIO backend transport for Services.
+class ExecutionsGrpcAsyncIOTransport(ExecutionsTransport):
+    """gRPC AsyncIO backend transport for Executions.
 
-    Cloud Run Service Control Plane API
+    Cloud Run Execution Control Plane API.
 
     This class defines the same methods as the primary client, so the
     primary client can load the underlying transport implementation
@@ -257,18 +254,71 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         return self._operations_client
 
     @property
-    def create_service(
+    def get_execution(
         self,
-    ) -> Callable[
-        [gcr_service.CreateServiceRequest], Awaitable[operations_pb2.Operation]
-    ]:
-        r"""Return a callable for the create service method over gRPC.
+    ) -> Callable[[execution.GetExecutionRequest], Awaitable[execution.Execution]]:
+        r"""Return a callable for the get execution method over gRPC.
 
-        Creates a new Service in a given project and
-        location.
+        Gets information about an Execution.
 
         Returns:
-            Callable[[~.CreateServiceRequest],
+            Callable[[~.GetExecutionRequest],
+                    Awaitable[~.Execution]]:
+                A function that, when called, will call the underlying RPC
+                on the server.
+        """
+        # Generate a "stub function" on-the-fly which will actually make
+        # the request.
+        # gRPC handles serialization and deserialization, so we just need
+        # to pass in the functions for each.
+        if "get_execution" not in self._stubs:
+            self._stubs["get_execution"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/GetExecution",
+                request_serializer=execution.GetExecutionRequest.serialize,
+                response_deserializer=execution.Execution.deserialize,
+            )
+        return self._stubs["get_execution"]
+
+    @property
+    def list_executions(
+        self,
+    ) -> Callable[
+        [execution.ListExecutionsRequest], Awaitable[execution.ListExecutionsResponse]
+    ]:
+        r"""Return a callable for the list executions method over gRPC.
+
+        Lists Executions from a Job.
+
+        Returns:
+            Callable[[~.ListExecutionsRequest],
+                    Awaitable[~.ListExecutionsResponse]]:
+                A function that, when called, will call the underlying RPC
+                on the server.
+        """
+        # Generate a "stub function" on-the-fly which will actually make
+        # the request.
+        # gRPC handles serialization and deserialization, so we just need
+        # to pass in the functions for each.
+        if "list_executions" not in self._stubs:
+            self._stubs["list_executions"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/ListExecutions",
+                request_serializer=execution.ListExecutionsRequest.serialize,
+                response_deserializer=execution.ListExecutionsResponse.deserialize,
+            )
+        return self._stubs["list_executions"]
+
+    @property
+    def delete_execution(
+        self,
+    ) -> Callable[
+        [execution.DeleteExecutionRequest], Awaitable[operations_pb2.Operation]
+    ]:
+        r"""Return a callable for the delete execution method over gRPC.
+
+        Deletes an Execution.
+
+        Returns:
+            Callable[[~.DeleteExecutionRequest],
                     Awaitable[~.Operation]]:
                 A function that, when called, will call the underlying RPC
                 on the server.
@@ -277,210 +327,13 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         # the request.
         # gRPC handles serialization and deserialization, so we just need
         # to pass in the functions for each.
-        if "create_service" not in self._stubs:
-            self._stubs["create_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/CreateService",
-                request_serializer=gcr_service.CreateServiceRequest.serialize,
+        if "delete_execution" not in self._stubs:
+            self._stubs["delete_execution"] = self.grpc_channel.unary_unary(
+                "/google.cloud.run.v2.Executions/DeleteExecution",
+                request_serializer=execution.DeleteExecutionRequest.serialize,
                 response_deserializer=operations_pb2.Operation.FromString,
             )
-        return self._stubs["create_service"]
-
-    @property
-    def get_service(
-        self,
-    ) -> Callable[[service.GetServiceRequest], Awaitable[service.Service]]:
-        r"""Return a callable for the get service method over gRPC.
-
-        Gets information about a Service.
-
-        Returns:
-            Callable[[~.GetServiceRequest],
-                    Awaitable[~.Service]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "get_service" not in self._stubs:
-            self._stubs["get_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/GetService",
-                request_serializer=service.GetServiceRequest.serialize,
-                response_deserializer=service.Service.deserialize,
-            )
-        return self._stubs["get_service"]
-
-    @property
-    def list_services(
-        self,
-    ) -> Callable[
-        [service.ListServicesRequest], Awaitable[service.ListServicesResponse]
-    ]:
-        r"""Return a callable for the list services method over gRPC.
-
-        Lists Services.
-
-        Returns:
-            Callable[[~.ListServicesRequest],
-                    Awaitable[~.ListServicesResponse]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "list_services" not in self._stubs:
-            self._stubs["list_services"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/ListServices",
-                request_serializer=service.ListServicesRequest.serialize,
-                response_deserializer=service.ListServicesResponse.deserialize,
-            )
-        return self._stubs["list_services"]
-
-    @property
-    def update_service(
-        self,
-    ) -> Callable[
-        [gcr_service.UpdateServiceRequest], Awaitable[operations_pb2.Operation]
-    ]:
-        r"""Return a callable for the update service method over gRPC.
-
-        Updates a Service.
-
-        Returns:
-            Callable[[~.UpdateServiceRequest],
-                    Awaitable[~.Operation]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "update_service" not in self._stubs:
-            self._stubs["update_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/UpdateService",
-                request_serializer=gcr_service.UpdateServiceRequest.serialize,
-                response_deserializer=operations_pb2.Operation.FromString,
-            )
-        return self._stubs["update_service"]
-
-    @property
-    def delete_service(
-        self,
-    ) -> Callable[[service.DeleteServiceRequest], Awaitable[operations_pb2.Operation]]:
-        r"""Return a callable for the delete service method over gRPC.
-
-        Deletes a Service.
-        This will cause the Service to stop serving traffic and
-        will delete all revisions.
-
-        Returns:
-            Callable[[~.DeleteServiceRequest],
-                    Awaitable[~.Operation]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "delete_service" not in self._stubs:
-            self._stubs["delete_service"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/DeleteService",
-                request_serializer=service.DeleteServiceRequest.serialize,
-                response_deserializer=operations_pb2.Operation.FromString,
-            )
-        return self._stubs["delete_service"]
-
-    @property
-    def get_iam_policy(
-        self,
-    ) -> Callable[[iam_policy_pb2.GetIamPolicyRequest], Awaitable[policy_pb2.Policy]]:
-        r"""Return a callable for the get iam policy method over gRPC.
-
-        Gets the IAM Access Control policy currently in
-        effect for the given Cloud Run Service. This result does
-        not include any inherited policies.
-
-        Returns:
-            Callable[[~.GetIamPolicyRequest],
-                    Awaitable[~.Policy]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "get_iam_policy" not in self._stubs:
-            self._stubs["get_iam_policy"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/GetIamPolicy",
-                request_serializer=iam_policy_pb2.GetIamPolicyRequest.SerializeToString,
-                response_deserializer=policy_pb2.Policy.FromString,
-            )
-        return self._stubs["get_iam_policy"]
-
-    @property
-    def set_iam_policy(
-        self,
-    ) -> Callable[[iam_policy_pb2.SetIamPolicyRequest], Awaitable[policy_pb2.Policy]]:
-        r"""Return a callable for the set iam policy method over gRPC.
-
-        Sets the IAM Access control policy for the specified
-        Service. Overwrites any existing policy.
-
-        Returns:
-            Callable[[~.SetIamPolicyRequest],
-                    Awaitable[~.Policy]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "set_iam_policy" not in self._stubs:
-            self._stubs["set_iam_policy"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/SetIamPolicy",
-                request_serializer=iam_policy_pb2.SetIamPolicyRequest.SerializeToString,
-                response_deserializer=policy_pb2.Policy.FromString,
-            )
-        return self._stubs["set_iam_policy"]
-
-    @property
-    def test_iam_permissions(
-        self,
-    ) -> Callable[
-        [iam_policy_pb2.TestIamPermissionsRequest],
-        Awaitable[iam_policy_pb2.TestIamPermissionsResponse],
-    ]:
-        r"""Return a callable for the test iam permissions method over gRPC.
-
-        Returns permissions that a caller has on the
-        specified Project.
-        There are no permissions required for making this API
-        call.
-
-        Returns:
-            Callable[[~.TestIamPermissionsRequest],
-                    Awaitable[~.TestIamPermissionsResponse]]:
-                A function that, when called, will call the underlying RPC
-                on the server.
-        """
-        # Generate a "stub function" on-the-fly which will actually make
-        # the request.
-        # gRPC handles serialization and deserialization, so we just need
-        # to pass in the functions for each.
-        if "test_iam_permissions" not in self._stubs:
-            self._stubs["test_iam_permissions"] = self.grpc_channel.unary_unary(
-                "/google.cloud.run.v2.Services/TestIamPermissions",
-                request_serializer=iam_policy_pb2.TestIamPermissionsRequest.SerializeToString,
-                response_deserializer=iam_policy_pb2.TestIamPermissionsResponse.FromString,
-            )
-        return self._stubs["test_iam_permissions"]
+        return self._stubs["delete_execution"]
 
     def close(self):
         return self.grpc_channel.close()
@@ -539,4 +392,4 @@ class ServicesGrpcAsyncIOTransport(ServicesTransport):
         return self._stubs["list_operations"]
 
 
-__all__ = ("ServicesGrpcAsyncIOTransport",)
+__all__ = ("ExecutionsGrpcAsyncIOTransport",)
