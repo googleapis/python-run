@@ -405,9 +405,9 @@ class JobsGrpcTransport(JobsTransport):
     ) -> Callable[[iam_policy_pb2.GetIamPolicyRequest], policy_pb2.Policy]:
         r"""Return a callable for the get iam policy method over gRPC.
 
-        Get the IAM Access Control policy currently in effect
-        for the given Job. This result does not include any
-        inherited policies.
+        Gets the IAM Access Control policy currently in
+        effect for the given Job. This result does not include
+        any inherited policies.
 
         Returns:
             Callable[[~.GetIamPolicyRequest],

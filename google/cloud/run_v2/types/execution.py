@@ -40,7 +40,8 @@ class GetExecutionRequest(proto.Message):
         name (str):
             Required. The full name of the Execution.
             Format:
-            projects/{project}/locations/{location}/jobs/{job}/executions/{execution}
+            projects/{project}/locations/{location}/jobs/{job}/executions/{execution},
+            where {project} can be project id or number.
     """
 
     name = proto.Field(
@@ -58,7 +59,8 @@ class ListExecutionsRequest(proto.Message):
             Executions should be listed. To list all
             Executions across Jobs, use "-" instead of Job
             name. Format:
-            projects/{project}/locations/{location}/jobs/{job}
+            projects/{project}/locations/{location}/jobs/{job},
+            where {project} can be project id or number.
         page_size (int):
             Maximum number of Executions to return in
             this call.
@@ -121,7 +123,8 @@ class DeleteExecutionRequest(proto.Message):
         name (str):
             Required. The name of the Execution to
             delete. Format:
-            projects/{project}/locations/{location}/jobs/{job}/executions/{execution}
+            projects/{project}/locations/{location}/jobs/{job}/executions/{execution},
+            where {project} can be project id or number.
         validate_only (bool):
             Indicates that the request should be
             validated without actually deleting any

@@ -34,6 +34,7 @@ __protobuf__ = proto.module(
         "HTTPGetAction",
         "HTTPHeader",
         "TCPSocketAction",
+        "GRPCAction",
     },
 )
 
@@ -172,11 +173,10 @@ class ResourceRequirements(proto.Message):
     Attributes:
         limits (Mapping[str, str]):
             Only memory and CPU are supported. Note: The
-            only supported values for CPU are '1', '2', and
-            '4'. Setting 4 CPU requires at least 2Gi of
-            memory.
-            The values of the map is string form of the
-            'quantity' k8s type:
+            only supported values for CPU are '1', '2',
+            '4', and '8'. Setting 4 CPU requires at least
+            2Gi of memory. The values of the map is string
+            form of the 'quantity' k8s type:
             https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go
         cpu_idle (bool):
             Determines whether CPU should be throttled or
@@ -271,8 +271,9 @@ class SecretKeySelector(proto.Message):
             a different project.
         version (str):
             The Cloud Secret Manager secret version.
-            Can be 'latest' for the latest value or an
-            integer for a specific version.
+            Can be 'latest' for the latest version, an
+            integer for a specific version, or a version
+            alias.
     """
 
     secret = proto.Field(
@@ -453,8 +454,9 @@ class VersionToPath(proto.Message):
             the container.
         version (str):
             The Cloud Secret Manager secret version.
-            Can be 'latest' for the latest value or an
-            integer for a specific version.
+            Can be 'latest' for the latest value, or an
+            integer or a secret alias for a specific
+            version.
         mode (int):
             Integer octal mode bits to use on this file, must be a value
             between 01 and 0777 (octal). If 0 or not set, the Volume's
@@ -548,14 +550,20 @@ class Probe(proto.Message):
             Defaults to 3. Minimum value is 1.
         http_get (google.cloud.run_v2.types.HTTPGetAction):
             HTTPGet specifies the http request to
-            perform. Exactly one of HTTPGet or TCPSocket
-            must be specified.
+            perform. Exactly one of httpGet, tcpSocket, or
+            grpc must be specified.
 
             This field is a member of `oneof`_ ``probe_type``.
         tcp_socket (google.cloud.run_v2.types.TCPSocketAction):
             TCPSocket specifies an action involving a TCP
-            port. Exactly one of HTTPGet or TCPSocket must
-            be specified.
+            port. Exactly one of httpGet, tcpSocket, or grpc
+            must be specified.
+
+            This field is a member of `oneof`_ ``probe_type``.
+        grpc (google.cloud.run_v2.types.GRPCAction):
+            GRPC specifies an action involving a gRPC
+            port. Exactly one of httpGet, tcpSocket, or grpc
+            must be specified.
 
             This field is a member of `oneof`_ ``probe_type``.
     """
@@ -587,6 +595,12 @@ class Probe(proto.Message):
         number=6,
         oneof="probe_type",
         message="TCPSocketAction",
+    )
+    grpc = proto.Field(
+        proto.MESSAGE,
+        number=7,
+        oneof="probe_type",
+        message="GRPCAction",
     )
 
 
@@ -640,12 +654,39 @@ class TCPSocketAction(proto.Message):
     Attributes:
         port (int):
             Port number to access on the container. Must
-            be in the range 1 to 65535.
+            be in the range 1 to 65535. If not specified,
+            defaults to 8080.
     """
 
     port = proto.Field(
         proto.INT32,
         number=1,
+    )
+
+
+class GRPCAction(proto.Message):
+    r"""GRPCAction describes an action involving a GRPC port.
+
+    Attributes:
+        port (int):
+            Port number of the gRPC service. Number must
+            be in the range 1 to 65535. If not specified,
+            defaults to 8080.
+        service (str):
+            Service is the name of the service to place
+            in the gRPC HealthCheckRequest (see
+            https://github.com/grpc/grpc/blob/master/doc/health-checking.md).
+            If this is not specified, the default behavior
+            is defined by gRPC.
+    """
+
+    port = proto.Field(
+        proto.INT32,
+        number=1,
+    )
+    service = proto.Field(
+        proto.STRING,
+        number=2,
     )
 
 

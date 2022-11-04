@@ -258,7 +258,9 @@ class ExecutionsAsyncClient:
             name (:class:`str`):
                 Required. The full name of the
                 Execution. Format:
-                projects/{project}/locations/{location}/jobs/{job}/executions/{execution}
+                projects/{project}/locations/{location}/jobs/{job}/executions/{execution},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -367,7 +369,9 @@ class ExecutionsAsyncClient:
                 the Executions should be listed. To list
                 all Executions across Jobs, use "-"
                 instead of Job name. Format:
-                projects/{project}/locations/{location}/jobs/{job}
+                projects/{project}/locations/{location}/jobs/{job},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -486,7 +490,9 @@ class ExecutionsAsyncClient:
             name (:class:`str`):
                 Required. The name of the Execution
                 to delete. Format:
-                projects/{project}/locations/{location}/jobs/{job}/executions/{execution}
+                projects/{project}/locations/{location}/jobs/{job}/executions/{execution},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this

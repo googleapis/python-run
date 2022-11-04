@@ -50,6 +50,7 @@ from .types.k8s_min import Container
 from .types.k8s_min import ContainerPort
 from .types.k8s_min import EnvVar
 from .types.k8s_min import EnvVarSource
+from .types.k8s_min import GRPCAction
 from .types.k8s_min import HTTPGetAction
 from .types.k8s_min import HTTPHeader
 from .types.k8s_min import Probe
@@ -112,6 +113,7 @@ __all__ = (
     "ExecutionReference",
     "ExecutionTemplate",
     "ExecutionsClient",
+    "GRPCAction",
     "GetExecutionRequest",
     "GetJobRequest",
     "GetRevisionRequest",

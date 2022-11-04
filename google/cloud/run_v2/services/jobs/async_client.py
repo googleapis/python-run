@@ -270,7 +270,9 @@ class JobsAsyncClient:
                 Required. The location and project in
                 which this Job should be created.
                 Format:
-                projects/{project}/locations/{location}
+                projects/{project}/locations/{location},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -400,7 +402,9 @@ class JobsAsyncClient:
             name (:class:`str`):
                 Required. The full name of the Job.
                 Format:
-                projects/{project}/locations/{location}/jobs/{job}
+                projects/{project}/locations/{location}/jobs/{job},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -506,7 +510,9 @@ class JobsAsyncClient:
             parent (:class:`str`):
                 Required. The location and project to
                 list resources on. Format:
-                projects/{project}/locations/{location}
+                projects/{project}/locations/{location},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -742,7 +748,9 @@ class JobsAsyncClient:
             name (:class:`str`):
                 Required. The full name of the Job.
                 Format:
-                projects/{project}/locations/{location}/jobs/{job}
+                projects/{project}/locations/{location}/jobs/{job},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -860,7 +868,9 @@ class JobsAsyncClient:
             name (:class:`str`):
                 Required. The full name of the Job.
                 Format:
-                projects/{project}/locations/{location}/jobs/{job}
+                projects/{project}/locations/{location}/jobs/{job},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -938,9 +948,9 @@ class JobsAsyncClient:
         timeout: float = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
-        r"""Get the IAM Access Control policy currently in effect
-        for the given Job. This result does not include any
-        inherited policies.
+        r"""Gets the IAM Access Control policy currently in
+        effect for the given Job. This result does not include
+        any inherited policies.
 
         .. code-block:: python
 

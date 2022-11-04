@@ -45,7 +45,8 @@ class CreateJobRequest(proto.Message):
         parent (str):
             Required. The location and project in which
             this Job should be created. Format:
-            projects/{project}/locations/{location}
+            projects/{project}/locations/{location}, where
+            {project} can be project id or number.
         job (google.cloud.run_v2.types.Job):
             Required. The Job instance to create.
         job_id (str):
@@ -84,7 +85,8 @@ class GetJobRequest(proto.Message):
         name (str):
             Required. The full name of the Job.
             Format:
-            projects/{project}/locations/{location}/jobs/{job}
+            projects/{project}/locations/{location}/jobs/{job},
+            where {project} can be project id or number.
     """
 
     name = proto.Field(
@@ -133,7 +135,8 @@ class ListJobsRequest(proto.Message):
         parent (str):
             Required. The location and project to list
             resources on. Format:
-            projects/{project}/locations/{location}
+            projects/{project}/locations/{location}, where
+            {project} can be project id or number.
         page_size (int):
             Maximum number of Jobs to return in this
             call.
@@ -196,7 +199,8 @@ class DeleteJobRequest(proto.Message):
         name (str):
             Required. The full name of the Job.
             Format:
-            projects/{project}/locations/{location}/jobs/{job}
+            projects/{project}/locations/{location}/jobs/{job},
+            where {project} can be project id or number.
         validate_only (bool):
             Indicates that the request should be
             validated without actually deleting any
@@ -228,7 +232,8 @@ class RunJobRequest(proto.Message):
         name (str):
             Required. The full name of the Job.
             Format:
-            projects/{project}/locations/{location}/jobs/{job}
+            projects/{project}/locations/{location}/jobs/{job},
+            where {project} can be project id or number.
         validate_only (bool):
             Indicates that the request should be
             validated without actually deleting any

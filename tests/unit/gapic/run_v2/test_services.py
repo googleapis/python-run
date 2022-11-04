@@ -2518,6 +2518,7 @@ def test_create_service_rest(request_type):
                             ],
                         },
                         "tcp_socket": {"port": 453},
+                        "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
                 }
@@ -2850,6 +2851,7 @@ def test_create_service_rest_bad_request(
                             ],
                         },
                         "tcp_socket": {"port": 453},
+                        "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
                 }
@@ -3694,6 +3696,7 @@ def test_update_service_rest(request_type):
                             ],
                         },
                         "tcp_socket": {"port": 453},
+                        "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
                 }
@@ -4005,6 +4008,7 @@ def test_update_service_rest_bad_request(
                             ],
                         },
                         "tcp_socket": {"port": 453},
+                        "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
                 }

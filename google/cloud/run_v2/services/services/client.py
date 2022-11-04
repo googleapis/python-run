@@ -606,9 +606,10 @@ class ServicesClient(metaclass=ServicesClientMeta):
                 Required. The location and project in
                 which this service should be created.
                 Format:
-                projects/{project}/locations/{location}
-                Only lowercase characters, digits, and
-                hyphens.
+                projects/{project}/locations/{location},
+                where {project} can be project id or
+                number. Only lowercase characters,
+                digits, and hyphens.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -622,7 +623,7 @@ class ServicesClient(metaclass=ServicesClientMeta):
                 should not be set.
             service_id (str):
                 Required. The unique identifier for the Service. It must
-                begin with letter, and may not end with hyphen; must
+                begin with letter, and cannot end with hyphen; must
                 contain fewer than 50 characters. The name of the
                 service becomes {parent}/services/{service_id}.
 
@@ -754,7 +755,9 @@ class ServicesClient(metaclass=ServicesClientMeta):
             name (str):
                 Required. The full name of the
                 Service. Format:
-                projects/{project}/locations/{location}/services/{service}
+                projects/{project}/locations/{location}/services/{service},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -873,9 +876,11 @@ class ServicesClient(metaclass=ServicesClientMeta):
             parent (str):
                 Required. The location and project to
                 list resources on. Location must be a
-                valid GCP region, and may not be the "-"
+                valid GCP region, and cannot be the "-"
                 wildcard. Format:
-                projects/{project}/locations/{location}
+                projects/{project}/locations/{location},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -1130,7 +1135,9 @@ class ServicesClient(metaclass=ServicesClientMeta):
             name (str):
                 Required. The full name of the
                 Service. Format:
-                projects/{project}/locations/{location}/services/{service}
+                projects/{project}/locations/{location}/services/{service},
+                where {project} can be project id or
+                number.
 
                 This corresponds to the ``name`` field
                 on the ``request`` instance; if ``request`` is provided, this

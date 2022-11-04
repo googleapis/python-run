@@ -55,7 +55,8 @@ class VpcAccess(proto.Message):
         connector (str):
             VPC Access connector name.
             Format:
-            projects/{project}/locations/{location}/connectors/{connector}
+            projects/{project}/locations/{location}/connectors/{connector},
+            where {project} can be project id or number.
         egress (google.cloud.run_v2.types.VpcAccess.VpcEgress):
             Traffic VPC egress settings.
     """
