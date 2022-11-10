@@ -16,7 +16,17 @@
 from collections import OrderedDict
 import functools
 import re
-from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, Union
+from typing import (
+    Dict,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+)
 import pkg_resources
 
 from google.api_core.client_options import ClientOptions
@@ -167,9 +177,9 @@ class TasksAsyncClient:
     def __init__(
         self,
         *,
-        credentials: ga_credentials.Credentials = None,
+        credentials: Optional[ga_credentials.Credentials] = None,
         transport: Union[str, TasksTransport] = "grpc_asyncio",
-        client_options: ClientOptions = None,
+        client_options: Optional[ClientOptions] = None,
         client_info: gapic_v1.client_info.ClientInfo = DEFAULT_CLIENT_INFO,
     ) -> None:
         """Instantiates the tasks client.
@@ -213,11 +223,11 @@ class TasksAsyncClient:
 
     async def get_task(
         self,
-        request: Union[task.GetTaskRequest, dict] = None,
+        request: Optional[Union[task.GetTaskRequest, dict]] = None,
         *,
-        name: str = None,
+        name: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> task.Task:
         r"""Gets information about a Task.
@@ -249,7 +259,7 @@ class TasksAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.GetTaskRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.GetTaskRequest, dict]]):
                 The request object. Request message for obtaining a Task
                 by its full name.
             name (:class:`str`):
@@ -316,11 +326,11 @@ class TasksAsyncClient:
 
     async def list_tasks(
         self,
-        request: Union[task.ListTasksRequest, dict] = None,
+        request: Optional[Union[task.ListTasksRequest, dict]] = None,
         *,
-        parent: str = None,
+        parent: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> pagers.ListTasksAsyncPager:
         r"""Lists Tasks from an Execution of a Job.
@@ -353,7 +363,7 @@ class TasksAsyncClient:
                     print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.ListTasksRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.ListTasksRequest, dict]]):
                 The request object. Request message for retrieving a
                 list of Tasks.
             parent (:class:`str`):
@@ -436,10 +446,10 @@ class TasksAsyncClient:
 
     async def list_operations(
         self,
-        request: operations_pb2.ListOperationsRequest = None,
+        request: Optional[operations_pb2.ListOperationsRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operations_pb2.ListOperationsResponse:
         r"""Lists operations that match the specified filter in the request.
@@ -490,10 +500,10 @@ class TasksAsyncClient:
 
     async def get_operation(
         self,
-        request: operations_pb2.GetOperationRequest = None,
+        request: Optional[operations_pb2.GetOperationRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operations_pb2.Operation:
         r"""Gets the latest state of a long-running operation.
@@ -544,10 +554,10 @@ class TasksAsyncClient:
 
     async def delete_operation(
         self,
-        request: operations_pb2.DeleteOperationRequest = None,
+        request: Optional[operations_pb2.DeleteOperationRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> None:
         r"""Deletes a long-running operation.

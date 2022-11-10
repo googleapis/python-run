@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 from google.cloud.run_v2.types import task_template
@@ -31,9 +33,9 @@ class ExecutionTemplate(proto.Message):
     when created from a template.
 
     Attributes:
-        labels (Mapping[str, str]):
+        labels (MutableMapping[str, str]):
             KRM-style labels for the resource.
-        annotations (Mapping[str, str]):
+        annotations (MutableMapping[str, str]):
             KRM-style annotations for the resource.
         parallelism (int):
             Specifies the maximum desired number of tasks the execution
@@ -56,25 +58,25 @@ class ExecutionTemplate(proto.Message):
             created when executing an execution.
     """
 
-    labels = proto.MapField(
+    labels: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=1,
     )
-    annotations = proto.MapField(
+    annotations: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=2,
     )
-    parallelism = proto.Field(
+    parallelism: int = proto.Field(
         proto.INT32,
         number=3,
     )
-    task_count = proto.Field(
+    task_count: int = proto.Field(
         proto.INT32,
         number=4,
     )
-    template = proto.Field(
+    template: task_template.TaskTemplate = proto.Field(
         proto.MESSAGE,
         number=5,
         message=task_template.TaskTemplate,

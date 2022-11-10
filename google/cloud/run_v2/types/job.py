@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 from google.api import launch_stage_pb2  # type: ignore
@@ -59,20 +61,20 @@ class CreateJobRequest(proto.Message):
             resources.
     """
 
-    parent = proto.Field(
+    parent: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    job = proto.Field(
+    job: "Job" = proto.Field(
         proto.MESSAGE,
         number=2,
         message="Job",
     )
-    job_id = proto.Field(
+    job_id: str = proto.Field(
         proto.STRING,
         number=3,
     )
-    validate_only = proto.Field(
+    validate_only: bool = proto.Field(
         proto.BOOL,
         number=4,
     )
@@ -89,7 +91,7 @@ class GetJobRequest(proto.Message):
             where {project} can be project id or number.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
@@ -113,16 +115,16 @@ class UpdateJobRequest(proto.Message):
             call if this is set to true.
     """
 
-    job = proto.Field(
+    job: "Job" = proto.Field(
         proto.MESSAGE,
         number=1,
         message="Job",
     )
-    validate_only = proto.Field(
+    validate_only: bool = proto.Field(
         proto.BOOL,
         number=3,
     )
-    allow_missing = proto.Field(
+    allow_missing: bool = proto.Field(
         proto.BOOL,
         number=4,
     )
@@ -148,19 +150,19 @@ class ListJobsRequest(proto.Message):
             resources along with active ones.
     """
 
-    parent = proto.Field(
+    parent: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    page_size = proto.Field(
+    page_size: int = proto.Field(
         proto.INT32,
         number=2,
     )
-    page_token = proto.Field(
+    page_token: str = proto.Field(
         proto.STRING,
         number=3,
     )
-    show_deleted = proto.Field(
+    show_deleted: bool = proto.Field(
         proto.BOOL,
         number=4,
     )
@@ -170,7 +172,7 @@ class ListJobsResponse(proto.Message):
     r"""Response message containing a list of Jobs.
 
     Attributes:
-        jobs (Sequence[google.cloud.run_v2.types.Job]):
+        jobs (MutableSequence[google.cloud.run_v2.types.Job]):
             The resulting list of Jobs.
         next_page_token (str):
             A token indicating there are more items than page_size. Use
@@ -181,12 +183,12 @@ class ListJobsResponse(proto.Message):
     def raw_page(self):
         return self
 
-    jobs = proto.RepeatedField(
+    jobs: MutableSequence["Job"] = proto.RepeatedField(
         proto.MESSAGE,
         number=1,
         message="Job",
     )
-    next_page_token = proto.Field(
+    next_page_token: str = proto.Field(
         proto.STRING,
         number=2,
     )
@@ -211,15 +213,15 @@ class DeleteJobRequest(proto.Message):
             modification conflict during updates.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    validate_only = proto.Field(
+    validate_only: bool = proto.Field(
         proto.BOOL,
         number=3,
     )
-    etag = proto.Field(
+    etag: str = proto.Field(
         proto.STRING,
         number=4,
     )
@@ -244,15 +246,15 @@ class RunJobRequest(proto.Message):
             modification conflict during updates.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    validate_only = proto.Field(
+    validate_only: bool = proto.Field(
         proto.BOOL,
         number=2,
     )
-    etag = proto.Field(
+    etag: str = proto.Field(
         proto.STRING,
         number=3,
     )
@@ -277,7 +279,7 @@ class Job(proto.Message):
             Output only. A number that monotonically
             increases every time the user modifies the
             desired state.
-        labels (Mapping[str, str]):
+        labels (MutableMapping[str, str]):
             KRM-style labels for the resource.
             User-provided labels are shared with Google's
             billing system, so they can be used to filter,
@@ -291,7 +293,7 @@ class Job(proto.Message):
             'run.googleapis.com' or 'serving.knative.dev'
             namespaces. Those labels are read-only, and user
             changes will not be preserved.
-        annotations (Mapping[str, str]):
+        annotations (MutableMapping[str, str]):
             KRM-style annotations for the resource.
             Unstructured key value map that may be set by
             external tools to store and arbitrary metadata.
@@ -342,7 +344,7 @@ class Job(proto.Message):
             containing its readiness status, and detailed
             error information in case it did not reach the
             desired state.
-        conditions (Sequence[google.cloud.run_v2.types.Condition]):
+        conditions (MutableSequence[google.cloud.run_v2.types.Condition]):
             Output only. The Conditions of all other associated
             sub-resources. They contain additional diagnostics
             information in case the Job does not reach its desired
@@ -386,107 +388,107 @@ class Job(proto.Message):
             detect modification conflict during updates.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    uid = proto.Field(
+    uid: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    generation = proto.Field(
+    generation: int = proto.Field(
         proto.INT64,
         number=3,
     )
-    labels = proto.MapField(
+    labels: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=4,
     )
-    annotations = proto.MapField(
+    annotations: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=5,
     )
-    create_time = proto.Field(
+    create_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=6,
         message=timestamp_pb2.Timestamp,
     )
-    update_time = proto.Field(
+    update_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=7,
         message=timestamp_pb2.Timestamp,
     )
-    delete_time = proto.Field(
+    delete_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=8,
         message=timestamp_pb2.Timestamp,
     )
-    expire_time = proto.Field(
+    expire_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=9,
         message=timestamp_pb2.Timestamp,
     )
-    creator = proto.Field(
+    creator: str = proto.Field(
         proto.STRING,
         number=10,
     )
-    last_modifier = proto.Field(
+    last_modifier: str = proto.Field(
         proto.STRING,
         number=11,
     )
-    client = proto.Field(
+    client: str = proto.Field(
         proto.STRING,
         number=12,
     )
-    client_version = proto.Field(
+    client_version: str = proto.Field(
         proto.STRING,
         number=13,
     )
-    launch_stage = proto.Field(
+    launch_stage: launch_stage_pb2.LaunchStage = proto.Field(
         proto.ENUM,
         number=14,
         enum=launch_stage_pb2.LaunchStage,
     )
-    binary_authorization = proto.Field(
+    binary_authorization: vendor_settings.BinaryAuthorization = proto.Field(
         proto.MESSAGE,
         number=15,
         message=vendor_settings.BinaryAuthorization,
     )
-    template = proto.Field(
+    template: execution_template.ExecutionTemplate = proto.Field(
         proto.MESSAGE,
         number=16,
         message=execution_template.ExecutionTemplate,
     )
-    observed_generation = proto.Field(
+    observed_generation: int = proto.Field(
         proto.INT64,
         number=17,
     )
-    terminal_condition = proto.Field(
+    terminal_condition: condition.Condition = proto.Field(
         proto.MESSAGE,
         number=18,
         message=condition.Condition,
     )
-    conditions = proto.RepeatedField(
+    conditions: MutableSequence[condition.Condition] = proto.RepeatedField(
         proto.MESSAGE,
         number=19,
         message=condition.Condition,
     )
-    execution_count = proto.Field(
+    execution_count: int = proto.Field(
         proto.INT32,
         number=20,
     )
-    latest_created_execution = proto.Field(
+    latest_created_execution: "ExecutionReference" = proto.Field(
         proto.MESSAGE,
         number=22,
         message="ExecutionReference",
     )
-    reconciling = proto.Field(
+    reconciling: bool = proto.Field(
         proto.BOOL,
         number=23,
     )
-    etag = proto.Field(
+    etag: str = proto.Field(
         proto.STRING,
         number=99,
     )
@@ -506,16 +508,16 @@ class ExecutionReference(proto.Message):
             Creation timestamp of the execution.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    create_time = proto.Field(
+    create_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=2,
         message=timestamp_pb2.Timestamp,
     )
-    completion_time = proto.Field(
+    completion_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=3,
         message=timestamp_pb2.Timestamp,

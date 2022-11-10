@@ -16,7 +16,17 @@
 from collections import OrderedDict
 import functools
 import re
-from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, Union
+from typing import (
+    Dict,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+)
 import pkg_resources
 
 from google.api_core.client_options import ClientOptions
@@ -171,9 +181,9 @@ class JobsAsyncClient:
     def __init__(
         self,
         *,
-        credentials: ga_credentials.Credentials = None,
+        credentials: Optional[ga_credentials.Credentials] = None,
         transport: Union[str, JobsTransport] = "grpc_asyncio",
-        client_options: ClientOptions = None,
+        client_options: Optional[ClientOptions] = None,
         client_info: gapic_v1.client_info.ClientInfo = DEFAULT_CLIENT_INFO,
     ) -> None:
         """Instantiates the jobs client.
@@ -217,13 +227,13 @@ class JobsAsyncClient:
 
     async def create_job(
         self,
-        request: Union[gcr_job.CreateJobRequest, dict] = None,
+        request: Optional[Union[gcr_job.CreateJobRequest, dict]] = None,
         *,
-        parent: str = None,
-        job: gcr_job.Job = None,
-        job_id: str = None,
+        parent: Optional[str] = None,
+        job: Optional[gcr_job.Job] = None,
+        job_id: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operation_async.AsyncOperation:
         r"""Creates a Job.
@@ -264,7 +274,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.CreateJobRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.CreateJobRequest, dict]]):
                 The request object. Request message for creating a Job.
             parent (:class:`str`):
                 Required. The location and project in
@@ -360,11 +370,11 @@ class JobsAsyncClient:
 
     async def get_job(
         self,
-        request: Union[job.GetJobRequest, dict] = None,
+        request: Optional[Union[job.GetJobRequest, dict]] = None,
         *,
-        name: str = None,
+        name: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> job.Job:
         r"""Gets information about a Job.
@@ -396,7 +406,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.GetJobRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.GetJobRequest, dict]]):
                 The request object. Request message for obtaining a Job
                 by its full name.
             name (:class:`str`):
@@ -467,11 +477,11 @@ class JobsAsyncClient:
 
     async def list_jobs(
         self,
-        request: Union[job.ListJobsRequest, dict] = None,
+        request: Optional[Union[job.ListJobsRequest, dict]] = None,
         *,
-        parent: str = None,
+        parent: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> pagers.ListJobsAsyncPager:
         r"""Lists Jobs.
@@ -504,7 +514,7 @@ class JobsAsyncClient:
                     print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.ListJobsRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.ListJobsRequest, dict]]):
                 The request object. Request message for retrieving a
                 list of Jobs.
             parent (:class:`str`):
@@ -585,11 +595,11 @@ class JobsAsyncClient:
 
     async def update_job(
         self,
-        request: Union[gcr_job.UpdateJobRequest, dict] = None,
+        request: Optional[Union[gcr_job.UpdateJobRequest, dict]] = None,
         *,
-        job: gcr_job.Job = None,
+        job: Optional[gcr_job.Job] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operation_async.AsyncOperation:
         r"""Updates a Job.
@@ -628,7 +638,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.UpdateJobRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.UpdateJobRequest, dict]]):
                 The request object. Request message for updating a Job.
             job (:class:`google.cloud.run_v2.types.Job`):
                 Required. The Job to be updated.
@@ -702,11 +712,11 @@ class JobsAsyncClient:
 
     async def delete_job(
         self,
-        request: Union[job.DeleteJobRequest, dict] = None,
+        request: Optional[Union[job.DeleteJobRequest, dict]] = None,
         *,
-        name: str = None,
+        name: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operation_async.AsyncOperation:
         r"""Deletes a Job.
@@ -742,7 +752,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.DeleteJobRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.DeleteJobRequest, dict]]):
                 The request object. Request message to delete a Job by
                 its full name.
             name (:class:`str`):
@@ -822,11 +832,11 @@ class JobsAsyncClient:
 
     async def run_job(
         self,
-        request: Union[job.RunJobRequest, dict] = None,
+        request: Optional[Union[job.RunJobRequest, dict]] = None,
         *,
-        name: str = None,
+        name: Optional[str] = None,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operation_async.AsyncOperation:
         r"""Triggers creation of a new Execution of this Job.
@@ -862,7 +872,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.cloud.run_v2.types.RunJobRequest, dict]):
+            request (Optional[Union[google.cloud.run_v2.types.RunJobRequest, dict]]):
                 The request object. Request message to create a new
                 Execution of a Job.
             name (:class:`str`):
@@ -942,10 +952,10 @@ class JobsAsyncClient:
 
     async def get_iam_policy(
         self,
-        request: Union[iam_policy_pb2.GetIamPolicyRequest, dict] = None,
+        request: Optional[Union[iam_policy_pb2.GetIamPolicyRequest, dict]] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
         r"""Gets the IAM Access Control policy currently in
@@ -980,7 +990,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.iam.v1.iam_policy_pb2.GetIamPolicyRequest, dict]):
+            request (Optional[Union[google.iam.v1.iam_policy_pb2.GetIamPolicyRequest, dict]]):
                 The request object. Request message for `GetIamPolicy`
                 method.
             retry (google.api_core.retry.Retry): Designation of what errors, if any,
@@ -1087,10 +1097,10 @@ class JobsAsyncClient:
 
     async def set_iam_policy(
         self,
-        request: Union[iam_policy_pb2.SetIamPolicyRequest, dict] = None,
+        request: Optional[Union[iam_policy_pb2.SetIamPolicyRequest, dict]] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> policy_pb2.Policy:
         r"""Sets the IAM Access control policy for the specified
@@ -1124,7 +1134,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.iam.v1.iam_policy_pb2.SetIamPolicyRequest, dict]):
+            request (Optional[Union[google.iam.v1.iam_policy_pb2.SetIamPolicyRequest, dict]]):
                 The request object. Request message for `SetIamPolicy`
                 method.
             retry (google.api_core.retry.Retry): Designation of what errors, if any,
@@ -1231,10 +1241,10 @@ class JobsAsyncClient:
 
     async def test_iam_permissions(
         self,
-        request: Union[iam_policy_pb2.TestIamPermissionsRequest, dict] = None,
+        request: Optional[Union[iam_policy_pb2.TestIamPermissionsRequest, dict]] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> iam_policy_pb2.TestIamPermissionsResponse:
         r"""Returns permissions that a caller has on the
@@ -1271,7 +1281,7 @@ class JobsAsyncClient:
                 print(response)
 
         Args:
-            request (Union[google.iam.v1.iam_policy_pb2.TestIamPermissionsRequest, dict]):
+            request (Optional[Union[google.iam.v1.iam_policy_pb2.TestIamPermissionsRequest, dict]]):
                 The request object. Request message for
                 `TestIamPermissions` method.
             retry (google.api_core.retry.Retry): Designation of what errors, if any,
@@ -1317,10 +1327,10 @@ class JobsAsyncClient:
 
     async def list_operations(
         self,
-        request: operations_pb2.ListOperationsRequest = None,
+        request: Optional[operations_pb2.ListOperationsRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operations_pb2.ListOperationsResponse:
         r"""Lists operations that match the specified filter in the request.
@@ -1371,10 +1381,10 @@ class JobsAsyncClient:
 
     async def get_operation(
         self,
-        request: operations_pb2.GetOperationRequest = None,
+        request: Optional[operations_pb2.GetOperationRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operations_pb2.Operation:
         r"""Gets the latest state of a long-running operation.
@@ -1425,10 +1435,10 @@ class JobsAsyncClient:
 
     async def delete_operation(
         self,
-        request: operations_pb2.DeleteOperationRequest = None,
+        request: Optional[operations_pb2.DeleteOperationRequest] = None,
         *,
         retry: OptionalRetry = gapic_v1.method.DEFAULT,
-        timeout: float = None,
+        timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> None:
         r"""Deletes a long-running operation.

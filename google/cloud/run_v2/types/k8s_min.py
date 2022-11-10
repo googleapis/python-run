@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 
@@ -54,7 +56,7 @@ class Container(proto.Message):
             Google Container Registry or Google Artifact
             Registry. More info:
             https://kubernetes.io/docs/concepts/containers/images
-        command (Sequence[str]):
+        command (MutableSequence[str]):
             Entrypoint array. Not executed within a shell. The docker
             image's ENTRYPOINT is used if this is not provided. Variable
             references $(VAR_NAME) are expanded using the container's
@@ -64,7 +66,7 @@ class Container(proto.Message):
             Escaped references will never be expanded, regardless of
             whether the variable exists or not. More info:
             https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
-        args (Sequence[str]):
+        args (MutableSequence[str]):
             Arguments to the entrypoint. The docker image's CMD is used
             if this is not provided. Variable references $(VAR_NAME) are
             expanded using the container's environment. If a variable
@@ -74,14 +76,14 @@ class Container(proto.Message):
             be expanded, regardless of whether the variable exists or
             not. More info:
             https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
-        env (Sequence[google.cloud.run_v2.types.EnvVar]):
+        env (MutableSequence[google.cloud.run_v2.types.EnvVar]):
             List of environment variables to set in the
             container.
         resources (google.cloud.run_v2.types.ResourceRequirements):
             Compute Resource requirements by this
             container. More info:
             https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
-        ports (Sequence[google.cloud.run_v2.types.ContainerPort]):
+        ports (MutableSequence[google.cloud.run_v2.types.ContainerPort]):
             List of ports to expose from the container.
             Only a single port can be specified. The
             specified ports must be listening on all
@@ -91,7 +93,7 @@ class Container(proto.Message):
             passed to the container through the PORT
             environment variable for the container to listen
             on.
-        volume_mounts (Sequence[google.cloud.run_v2.types.VolumeMount]):
+        volume_mounts (MutableSequence[google.cloud.run_v2.types.VolumeMount]):
             Volume to mount into the container's
             filesystem.
         working_dir (str):
@@ -114,52 +116,52 @@ class Container(proto.Message):
             https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    image = proto.Field(
+    image: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    command = proto.RepeatedField(
+    command: MutableSequence[str] = proto.RepeatedField(
         proto.STRING,
         number=3,
     )
-    args = proto.RepeatedField(
+    args: MutableSequence[str] = proto.RepeatedField(
         proto.STRING,
         number=4,
     )
-    env = proto.RepeatedField(
+    env: MutableSequence["EnvVar"] = proto.RepeatedField(
         proto.MESSAGE,
         number=5,
         message="EnvVar",
     )
-    resources = proto.Field(
+    resources: "ResourceRequirements" = proto.Field(
         proto.MESSAGE,
         number=6,
         message="ResourceRequirements",
     )
-    ports = proto.RepeatedField(
+    ports: MutableSequence["ContainerPort"] = proto.RepeatedField(
         proto.MESSAGE,
         number=7,
         message="ContainerPort",
     )
-    volume_mounts = proto.RepeatedField(
+    volume_mounts: MutableSequence["VolumeMount"] = proto.RepeatedField(
         proto.MESSAGE,
         number=8,
         message="VolumeMount",
     )
-    working_dir = proto.Field(
+    working_dir: str = proto.Field(
         proto.STRING,
         number=9,
     )
-    liveness_probe = proto.Field(
+    liveness_probe: "Probe" = proto.Field(
         proto.MESSAGE,
         number=10,
         message="Probe",
     )
-    startup_probe = proto.Field(
+    startup_probe: "Probe" = proto.Field(
         proto.MESSAGE,
         number=11,
         message="Probe",
@@ -171,7 +173,7 @@ class ResourceRequirements(proto.Message):
     requirements.
 
     Attributes:
-        limits (Mapping[str, str]):
+        limits (MutableMapping[str, str]):
             Only memory and CPU are supported. Note: The
             only supported values for CPU are '1', '2',
             '4', and '8'. Setting 4 CPU requires at least
@@ -183,12 +185,12 @@ class ResourceRequirements(proto.Message):
             not outside of requests.
     """
 
-    limits = proto.MapField(
+    limits: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=1,
     )
-    cpu_idle = proto.Field(
+    cpu_idle: bool = proto.Field(
         proto.BOOL,
         number=2,
     )
@@ -226,16 +228,16 @@ class EnvVar(proto.Message):
             This field is a member of `oneof`_ ``values``.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    value = proto.Field(
+    value: str = proto.Field(
         proto.STRING,
         number=2,
         oneof="values",
     )
-    value_source = proto.Field(
+    value_source: "EnvVarSource" = proto.Field(
         proto.MESSAGE,
         number=3,
         oneof="values",
@@ -252,7 +254,7 @@ class EnvVarSource(proto.Message):
             Cloud Secret Manager.
     """
 
-    secret_key_ref = proto.Field(
+    secret_key_ref: "SecretKeySelector" = proto.Field(
         proto.MESSAGE,
         number=1,
         message="SecretKeySelector",
@@ -276,11 +278,11 @@ class SecretKeySelector(proto.Message):
             alias.
     """
 
-    secret = proto.Field(
+    secret: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    version = proto.Field(
+    version: str = proto.Field(
         proto.STRING,
         number=2,
     )
@@ -299,11 +301,11 @@ class ContainerPort(proto.Message):
             TCP port number, 0 < container_port < 65536.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    container_port = proto.Field(
+    container_port: int = proto.Field(
         proto.INT32,
         number=3,
     )
@@ -327,11 +329,11 @@ class VolumeMount(proto.Message):
             https://cloud.google.com/sql/docs/mysql/connect-run
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    mount_path = proto.Field(
+    mount_path: str = proto.Field(
         proto.STRING,
         number=3,
     )
@@ -366,17 +368,17 @@ class Volume(proto.Message):
             This field is a member of `oneof`_ ``volume_type``.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    secret = proto.Field(
+    secret: "SecretVolumeSource" = proto.Field(
         proto.MESSAGE,
         number=2,
         oneof="volume_type",
         message="SecretVolumeSource",
     )
-    cloud_sql_instance = proto.Field(
+    cloud_sql_instance: "CloudSqlInstance" = proto.Field(
         proto.MESSAGE,
         number=3,
         oneof="volume_type",
@@ -396,7 +398,7 @@ class SecretVolumeSource(proto.Message):
             is in the same project.
             projects/{project}/secrets/{secret} if the
             secret is in a different project.
-        items (Sequence[google.cloud.run_v2.types.VersionToPath]):
+        items (MutableSequence[google.cloud.run_v2.types.VersionToPath]):
             If unspecified, the volume will expose a file whose name is
             the secret, relative to VolumeMount.mount_path. If
             specified, the key will be used as the version to fetch from
@@ -429,16 +431,16 @@ class SecretVolumeSource(proto.Message):
             could be set.
     """
 
-    secret = proto.Field(
+    secret: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    items = proto.RepeatedField(
+    items: MutableSequence["VersionToPath"] = proto.RepeatedField(
         proto.MESSAGE,
         number=2,
         message="VersionToPath",
     )
-    default_mode = proto.Field(
+    default_mode: int = proto.Field(
         proto.INT32,
         number=3,
     )
@@ -478,15 +480,15 @@ class VersionToPath(proto.Message):
                mode bits set.
     """
 
-    path = proto.Field(
+    path: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    version = proto.Field(
+    version: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    mode = proto.Field(
+    mode: int = proto.Field(
         proto.INT32,
         number=3,
     )
@@ -496,7 +498,7 @@ class CloudSqlInstance(proto.Message):
     r"""Represents a specific Cloud SQL instance.
 
     Attributes:
-        instances (Sequence[str]):
+        instances (MutableSequence[str]):
             The Cloud SQL instance connection names, as
             can be found in
             https://console.cloud.google.com/sql/instances.
@@ -507,7 +509,7 @@ class CloudSqlInstance(proto.Message):
             {project}:{location}:{instance}
     """
 
-    instances = proto.RepeatedField(
+    instances: MutableSequence[str] = proto.RepeatedField(
         proto.STRING,
         number=1,
     )
@@ -568,35 +570,35 @@ class Probe(proto.Message):
             This field is a member of `oneof`_ ``probe_type``.
     """
 
-    initial_delay_seconds = proto.Field(
+    initial_delay_seconds: int = proto.Field(
         proto.INT32,
         number=1,
     )
-    timeout_seconds = proto.Field(
+    timeout_seconds: int = proto.Field(
         proto.INT32,
         number=2,
     )
-    period_seconds = proto.Field(
+    period_seconds: int = proto.Field(
         proto.INT32,
         number=3,
     )
-    failure_threshold = proto.Field(
+    failure_threshold: int = proto.Field(
         proto.INT32,
         number=4,
     )
-    http_get = proto.Field(
+    http_get: "HTTPGetAction" = proto.Field(
         proto.MESSAGE,
         number=5,
         oneof="probe_type",
         message="HTTPGetAction",
     )
-    tcp_socket = proto.Field(
+    tcp_socket: "TCPSocketAction" = proto.Field(
         proto.MESSAGE,
         number=6,
         oneof="probe_type",
         message="TCPSocketAction",
     )
-    grpc = proto.Field(
+    grpc: "GRPCAction" = proto.Field(
         proto.MESSAGE,
         number=7,
         oneof="probe_type",
@@ -611,16 +613,16 @@ class HTTPGetAction(proto.Message):
         path (str):
             Path to access on the HTTP server. Defaults
             to '/'.
-        http_headers (Sequence[google.cloud.run_v2.types.HTTPHeader]):
+        http_headers (MutableSequence[google.cloud.run_v2.types.HTTPHeader]):
             Custom headers to set in the request. HTTP
             allows repeated headers.
     """
 
-    path = proto.Field(
+    path: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    http_headers = proto.RepeatedField(
+    http_headers: MutableSequence["HTTPHeader"] = proto.RepeatedField(
         proto.MESSAGE,
         number=4,
         message="HTTPHeader",
@@ -638,11 +640,11 @@ class HTTPHeader(proto.Message):
             The header field value
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    value = proto.Field(
+    value: str = proto.Field(
         proto.STRING,
         number=2,
     )
@@ -658,7 +660,7 @@ class TCPSocketAction(proto.Message):
             defaults to 8080.
     """
 
-    port = proto.Field(
+    port: int = proto.Field(
         proto.INT32,
         number=1,
     )
@@ -680,11 +682,11 @@ class GRPCAction(proto.Message):
             is defined by gRPC.
     """
 
-    port = proto.Field(
+    port: int = proto.Field(
         proto.INT32,
         number=1,
     )
-    service = proto.Field(
+    service: str = proto.Field(
         proto.STRING,
         number=2,
     )

@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 from google.cloud.run_v2.types import condition
@@ -45,7 +47,7 @@ class GetTaskRequest(proto.Message):
             projects/{project}/locations/{location}/jobs/{job}/executions/{execution}/tasks/{task}
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
@@ -73,19 +75,19 @@ class ListTasksRequest(proto.Message):
             resources along with active ones.
     """
 
-    parent = proto.Field(
+    parent: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    page_size = proto.Field(
+    page_size: int = proto.Field(
         proto.INT32,
         number=2,
     )
-    page_token = proto.Field(
+    page_token: str = proto.Field(
         proto.STRING,
         number=3,
     )
-    show_deleted = proto.Field(
+    show_deleted: bool = proto.Field(
         proto.BOOL,
         number=4,
     )
@@ -95,7 +97,7 @@ class ListTasksResponse(proto.Message):
     r"""Response message containing a list of Tasks.
 
     Attributes:
-        tasks (Sequence[google.cloud.run_v2.types.Task]):
+        tasks (MutableSequence[google.cloud.run_v2.types.Task]):
             The resulting list of Tasks.
         next_page_token (str):
             A token indicating there are more items than page_size. Use
@@ -106,12 +108,12 @@ class ListTasksResponse(proto.Message):
     def raw_page(self):
         return self
 
-    tasks = proto.RepeatedField(
+    tasks: MutableSequence["Task"] = proto.RepeatedField(
         proto.MESSAGE,
         number=1,
         message="Task",
     )
-    next_page_token = proto.Field(
+    next_page_token: str = proto.Field(
         proto.STRING,
         number=2,
     )
@@ -132,7 +134,7 @@ class Task(proto.Message):
             Output only. A number that monotonically
             increases every time the user modifies the
             desired state.
-        labels (Mapping[str, str]):
+        labels (MutableMapping[str, str]):
             KRM-style labels for the resource.
             User-provided labels are shared with Google's
             billing system, so they can be used to filter,
@@ -146,7 +148,7 @@ class Task(proto.Message):
             'run.googleapis.com' or 'serving.knative.dev'
             namespaces. Those labels are read-only, and user
             changes will not be preserved.
-        annotations (Mapping[str, str]):
+        annotations (MutableMapping[str, str]):
             KRM-style annotations for the resource.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
             Output only. Represents time when the task
@@ -178,10 +180,10 @@ class Task(proto.Message):
         execution (str):
             Output only. The name of the parent
             Execution.
-        containers (Sequence[google.cloud.run_v2.types.Container]):
+        containers (MutableSequence[google.cloud.run_v2.types.Container]):
             Holds the single container that defines the
             unit of execution for this task.
-        volumes (Sequence[google.cloud.run_v2.types.Volume]):
+        volumes (MutableSequence[google.cloud.run_v2.types.Volume]):
             A list of Volumes to make available to
             containers.
         max_retries (int):
@@ -208,7 +210,7 @@ class Task(proto.Message):
             is still in progress. See comments in ``Job.reconciling``
             for additional information on reconciliation process in
             Cloud Run.
-        conditions (Sequence[google.cloud.run_v2.types.Condition]):
+        conditions (MutableSequence[google.cloud.run_v2.types.Condition]):
             Output only. The Condition of this Task,
             containing its readiness status, and detailed
             error information in case it did not reach the
@@ -243,130 +245,130 @@ class Task(proto.Message):
             detect modification conflict during updates.
     """
 
-    name = proto.Field(
+    name: str = proto.Field(
         proto.STRING,
         number=1,
     )
-    uid = proto.Field(
+    uid: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    generation = proto.Field(
+    generation: int = proto.Field(
         proto.INT64,
         number=3,
     )
-    labels = proto.MapField(
+    labels: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=4,
     )
-    annotations = proto.MapField(
+    annotations: MutableMapping[str, str] = proto.MapField(
         proto.STRING,
         proto.STRING,
         number=5,
     )
-    create_time = proto.Field(
+    create_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=6,
         message=timestamp_pb2.Timestamp,
     )
-    start_time = proto.Field(
+    start_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=27,
         message=timestamp_pb2.Timestamp,
     )
-    completion_time = proto.Field(
+    completion_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=7,
         message=timestamp_pb2.Timestamp,
     )
-    update_time = proto.Field(
+    update_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=8,
         message=timestamp_pb2.Timestamp,
     )
-    delete_time = proto.Field(
+    delete_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=9,
         message=timestamp_pb2.Timestamp,
     )
-    expire_time = proto.Field(
+    expire_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=10,
         message=timestamp_pb2.Timestamp,
     )
-    job = proto.Field(
+    job: str = proto.Field(
         proto.STRING,
         number=12,
     )
-    execution = proto.Field(
+    execution: str = proto.Field(
         proto.STRING,
         number=13,
     )
-    containers = proto.RepeatedField(
+    containers: MutableSequence[k8s_min.Container] = proto.RepeatedField(
         proto.MESSAGE,
         number=14,
         message=k8s_min.Container,
     )
-    volumes = proto.RepeatedField(
+    volumes: MutableSequence[k8s_min.Volume] = proto.RepeatedField(
         proto.MESSAGE,
         number=15,
         message=k8s_min.Volume,
     )
-    max_retries = proto.Field(
+    max_retries: int = proto.Field(
         proto.INT32,
         number=16,
     )
-    timeout = proto.Field(
+    timeout: duration_pb2.Duration = proto.Field(
         proto.MESSAGE,
         number=17,
         message=duration_pb2.Duration,
     )
-    service_account = proto.Field(
+    service_account: str = proto.Field(
         proto.STRING,
         number=18,
     )
-    execution_environment = proto.Field(
+    execution_environment: vendor_settings.ExecutionEnvironment = proto.Field(
         proto.ENUM,
         number=20,
         enum=vendor_settings.ExecutionEnvironment,
     )
-    reconciling = proto.Field(
+    reconciling: bool = proto.Field(
         proto.BOOL,
         number=21,
     )
-    conditions = proto.RepeatedField(
+    conditions: MutableSequence[condition.Condition] = proto.RepeatedField(
         proto.MESSAGE,
         number=22,
         message=condition.Condition,
     )
-    observed_generation = proto.Field(
+    observed_generation: int = proto.Field(
         proto.INT64,
         number=23,
     )
-    index = proto.Field(
+    index: int = proto.Field(
         proto.INT32,
         number=24,
     )
-    retried = proto.Field(
+    retried: int = proto.Field(
         proto.INT32,
         number=25,
     )
-    last_attempt_result = proto.Field(
+    last_attempt_result: "TaskAttemptResult" = proto.Field(
         proto.MESSAGE,
         number=26,
         message="TaskAttemptResult",
     )
-    encryption_key = proto.Field(
+    encryption_key: str = proto.Field(
         proto.STRING,
         number=28,
     )
-    vpc_access = proto.Field(
+    vpc_access: vendor_settings.VpcAccess = proto.Field(
         proto.MESSAGE,
         number=29,
         message=vendor_settings.VpcAccess,
     )
-    etag = proto.Field(
+    etag: str = proto.Field(
         proto.STRING,
         number=99,
     )
@@ -388,12 +390,12 @@ class TaskAttemptResult(proto.Message):
             See status field for possible failure details.
     """
 
-    status = proto.Field(
+    status: status_pb2.Status = proto.Field(
         proto.MESSAGE,
         number=1,
         message=status_pb2.Status,
     )
-    exit_code = proto.Field(
+    exit_code: int = proto.Field(
         proto.INT32,
         number=2,
     )

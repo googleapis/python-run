@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 
@@ -52,20 +54,20 @@ class TrafficTarget(proto.Message):
             exclusively reference this target.
     """
 
-    type_ = proto.Field(
+    type_: "TrafficTargetAllocationType" = proto.Field(
         proto.ENUM,
         number=1,
         enum="TrafficTargetAllocationType",
     )
-    revision = proto.Field(
+    revision: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    percent = proto.Field(
+    percent: int = proto.Field(
         proto.INT32,
         number=3,
     )
-    tag = proto.Field(
+    tag: str = proto.Field(
         proto.STRING,
         number=4,
     )
@@ -89,24 +91,24 @@ class TrafficTargetStatus(proto.Message):
             Displays the target URI.
     """
 
-    type_ = proto.Field(
+    type_: "TrafficTargetAllocationType" = proto.Field(
         proto.ENUM,
         number=1,
         enum="TrafficTargetAllocationType",
     )
-    revision = proto.Field(
+    revision: str = proto.Field(
         proto.STRING,
         number=2,
     )
-    percent = proto.Field(
+    percent: int = proto.Field(
         proto.INT32,
         number=3,
     )
-    tag = proto.Field(
+    tag: str = proto.Field(
         proto.STRING,
         number=4,
     )
-    uri = proto.Field(
+    uri: str = proto.Field(
         proto.STRING,
         number=5,
     )

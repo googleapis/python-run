@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import MutableMapping, MutableSequence
+
 import proto  # type: ignore
 
 from google.cloud.run_v2.types import k8s_min
@@ -36,10 +38,10 @@ class TaskTemplate(proto.Message):
     .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
 
     Attributes:
-        containers (Sequence[google.cloud.run_v2.types.Container]):
+        containers (MutableSequence[google.cloud.run_v2.types.Container]):
             Holds the single container that defines the
             unit of execution for this task.
-        volumes (Sequence[google.cloud.run_v2.types.Volume]):
+        volumes (MutableSequence[google.cloud.run_v2.types.Volume]):
             A list of Volumes to make available to
             containers.
         max_retries (int):
@@ -74,40 +76,40 @@ class TaskTemplate(proto.Message):
             https://cloud.google.com/run/docs/configuring/connecting-vpc.
     """
 
-    containers = proto.RepeatedField(
+    containers: MutableSequence[k8s_min.Container] = proto.RepeatedField(
         proto.MESSAGE,
         number=1,
         message=k8s_min.Container,
     )
-    volumes = proto.RepeatedField(
+    volumes: MutableSequence[k8s_min.Volume] = proto.RepeatedField(
         proto.MESSAGE,
         number=2,
         message=k8s_min.Volume,
     )
-    max_retries = proto.Field(
+    max_retries: int = proto.Field(
         proto.INT32,
         number=3,
         oneof="retries",
     )
-    timeout = proto.Field(
+    timeout: duration_pb2.Duration = proto.Field(
         proto.MESSAGE,
         number=4,
         message=duration_pb2.Duration,
     )
-    service_account = proto.Field(
+    service_account: str = proto.Field(
         proto.STRING,
         number=5,
     )
-    execution_environment = proto.Field(
+    execution_environment: vendor_settings.ExecutionEnvironment = proto.Field(
         proto.ENUM,
         number=6,
         enum=vendor_settings.ExecutionEnvironment,
     )
-    encryption_key = proto.Field(
+    encryption_key: str = proto.Field(
         proto.STRING,
         number=7,
     )
-    vpc_access = proto.Field(
+    vpc_access: vendor_settings.VpcAccess = proto.Field(
         proto.MESSAGE,
         number=8,
         message=vendor_settings.VpcAccess,
