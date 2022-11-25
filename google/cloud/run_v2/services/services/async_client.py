@@ -27,14 +27,14 @@ from typing import (
     Type,
     Union,
 )
-import pkg_resources
 
-from google.api_core.client_options import ClientOptions
 from google.api_core import exceptions as core_exceptions
 from google.api_core import gapic_v1
 from google.api_core import retry as retries
+from google.api_core.client_options import ClientOptions
 from google.auth import credentials as ga_credentials  # type: ignore
 from google.oauth2 import service_account  # type: ignore
+import pkg_resources
 
 try:
     OptionalRetry = Union[retries.Retry, gapic_v1.method._MethodDefault]
@@ -45,20 +45,20 @@ from google.api import launch_stage_pb2  # type: ignore
 from google.api_core import operation  # type: ignore
 from google.api_core import operation_async  # type: ignore
 from google.cloud.location import locations_pb2  # type: ignore
-from google.cloud.run_v2.services.services import pagers
-from google.cloud.run_v2.types import condition
-from google.cloud.run_v2.types import revision_template
-from google.cloud.run_v2.types import service
-from google.cloud.run_v2.types import service as gcr_service
-from google.cloud.run_v2.types import traffic_target
-from google.cloud.run_v2.types import vendor_settings
 from google.iam.v1 import iam_policy_pb2  # type: ignore
 from google.iam.v1 import policy_pb2  # type: ignore
 from google.longrunning import operations_pb2
 from google.protobuf import timestamp_pb2  # type: ignore
-from .transports.base import ServicesTransport, DEFAULT_CLIENT_INFO
-from .transports.grpc_asyncio import ServicesGrpcAsyncIOTransport
+
+from google.cloud.run_v2.services.services import pagers
+from google.cloud.run_v2.types import condition, revision_template
+from google.cloud.run_v2.types import service
+from google.cloud.run_v2.types import service as gcr_service
+from google.cloud.run_v2.types import traffic_target, vendor_settings
+
 from .client import ServicesClient
+from .transports.base import DEFAULT_CLIENT_INFO, ServicesTransport
+from .transports.grpc_asyncio import ServicesGrpcAsyncIOTransport
 
 
 class ServicesAsyncClient:

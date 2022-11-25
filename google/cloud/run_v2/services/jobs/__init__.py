@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .client import JobsClient
 from .async_client import JobsAsyncClient
+from .client import JobsClient
 
 __all__ = (
     "JobsClient",

@@ -13,9 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .condition import (
-    Condition,
-)
+from .condition import Condition
 from .execution import (
     DeleteExecutionRequest,
     Execution,
@@ -23,9 +21,7 @@ from .execution import (
     ListExecutionsRequest,
     ListExecutionsResponse,
 )
-from .execution_template import (
-    ExecutionTemplate,
-)
+from .execution_template import ExecutionTemplate
 from .job import (
     CreateJobRequest,
     DeleteJobRequest,
@@ -62,9 +58,7 @@ from .revision import (
     ListRevisionsResponse,
     Revision,
 )
-from .revision_template import (
-    RevisionTemplate,
-)
+from .revision_template import RevisionTemplate
 from .service import (
     CreateServiceRequest,
     DeleteServiceRequest,
@@ -81,20 +75,18 @@ from .task import (
     Task,
     TaskAttemptResult,
 )
-from .task_template import (
-    TaskTemplate,
-)
+from .task_template import TaskTemplate
 from .traffic_target import (
     TrafficTarget,
-    TrafficTargetStatus,
     TrafficTargetAllocationType,
+    TrafficTargetStatus,
 )
 from .vendor_settings import (
     BinaryAuthorization,
-    RevisionScaling,
-    VpcAccess,
     ExecutionEnvironment,
     IngressTraffic,
+    RevisionScaling,
+    VpcAccess,
 )
 
 __all__ = (

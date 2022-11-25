@@ -19,7 +19,6 @@ import proto  # type: ignore
 
 from google.cloud.run_v2.types import task_template
 
-
 __protobuf__ = proto.module(
     package="google.cloud.run.v2",
     manifest={

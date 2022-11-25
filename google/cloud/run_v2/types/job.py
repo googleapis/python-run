@@ -15,14 +15,11 @@
 #
 from typing import MutableMapping, MutableSequence
 
+from google.api import launch_stage_pb2  # type: ignore
+from google.protobuf import timestamp_pb2  # type: ignore
 import proto  # type: ignore
 
-from google.api import launch_stage_pb2  # type: ignore
-from google.cloud.run_v2.types import condition
-from google.cloud.run_v2.types import execution_template
-from google.cloud.run_v2.types import vendor_settings
-from google.protobuf import timestamp_pb2  # type: ignore
-
+from google.cloud.run_v2.types import condition, execution_template, vendor_settings
 
 __protobuf__ = proto.module(
     package="google.cloud.run.v2",
