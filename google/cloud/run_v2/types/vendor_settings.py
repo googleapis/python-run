@@ -30,7 +30,19 @@ __protobuf__ = proto.module(
 
 
 class IngressTraffic(proto.Enum):
-    r"""Allowed ingress traffic for the Container."""
+    r"""Allowed ingress traffic for the Container.
+
+    Values:
+        INGRESS_TRAFFIC_UNSPECIFIED (0):
+            Unspecified
+        INGRESS_TRAFFIC_ALL (1):
+            All inbound traffic is allowed.
+        INGRESS_TRAFFIC_INTERNAL_ONLY (2):
+            Only internal traffic is allowed.
+        INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER (3):
+            Both internal and Google Cloud Load Balancer
+            traffic is allowed.
+    """
     INGRESS_TRAFFIC_UNSPECIFIED = 0
     INGRESS_TRAFFIC_ALL = 1
     INGRESS_TRAFFIC_INTERNAL_ONLY = 2
@@ -38,7 +50,16 @@ class IngressTraffic(proto.Enum):
 
 
 class ExecutionEnvironment(proto.Enum):
-    r"""Alternatives for execution environments."""
+    r"""Alternatives for execution environments.
+
+    Values:
+        EXECUTION_ENVIRONMENT_UNSPECIFIED (0):
+            Unspecified
+        EXECUTION_ENVIRONMENT_GEN1 (1):
+            Uses the First Generation environment.
+        EXECUTION_ENVIRONMENT_GEN2 (2):
+            Uses Second Generation environment.
+    """
     EXECUTION_ENVIRONMENT_UNSPECIFIED = 0
     EXECUTION_ENVIRONMENT_GEN1 = 1
     EXECUTION_ENVIRONMENT_GEN2 = 2
@@ -63,7 +84,18 @@ class VpcAccess(proto.Message):
     """
 
     class VpcEgress(proto.Enum):
-        r"""Egress options for VPC access."""
+        r"""Egress options for VPC access.
+
+        Values:
+            VPC_EGRESS_UNSPECIFIED (0):
+                Unspecified
+            ALL_TRAFFIC (1):
+                All outbound traffic is routed through the
+                VPC connector.
+            PRIVATE_RANGES_ONLY (2):
+                Only private IP ranges are routed through the
+                VPC connector.
+        """
         VPC_EGRESS_UNSPECIFIED = 0
         ALL_TRAFFIC = 1
         PRIVATE_RANGES_ONLY = 2

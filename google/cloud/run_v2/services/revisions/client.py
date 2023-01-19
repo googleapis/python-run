@@ -927,7 +927,7 @@ class RevisionsClient(metaclass=RevisionsClientMeta):
         # Done; return the response.
         return response
 
-    def __enter__(self):
+    def __enter__(self) -> "RevisionsClient":
         return self
 
     def __exit__(self, type, value, traceback):
