@@ -22,6 +22,7 @@ __protobuf__ = proto.module(
     manifest={
         "IngressTraffic",
         "ExecutionEnvironment",
+        "EncryptionKeyRevocationAction",
         "VpcAccess",
         "BinaryAuthorization",
         "RevisionScaling",
@@ -63,6 +64,24 @@ class ExecutionEnvironment(proto.Enum):
     EXECUTION_ENVIRONMENT_UNSPECIFIED = 0
     EXECUTION_ENVIRONMENT_GEN1 = 1
     EXECUTION_ENVIRONMENT_GEN2 = 2
+
+
+class EncryptionKeyRevocationAction(proto.Enum):
+    r"""Specifies behavior if an encryption key used by a resource is
+    revoked.
+
+    Values:
+        ENCRYPTION_KEY_REVOCATION_ACTION_UNSPECIFIED (0):
+            Unspecified
+        PREVENT_NEW (1):
+            Prevents the creation of new instances.
+        SHUTDOWN (2):
+            Shuts down existing instances, and prevents
+            creation of new ones.
+    """
+    ENCRYPTION_KEY_REVOCATION_ACTION_UNSPECIFIED = 0
+    PREVENT_NEW = 1
+    SHUTDOWN = 2
 
 
 class VpcAccess(proto.Message):

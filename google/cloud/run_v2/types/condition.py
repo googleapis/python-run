@@ -209,6 +209,9 @@ class Condition(proto.Message):
                 A revision's container has no port specified
                 since the revision is of a manually scaled
                 service with 0 instance count
+            MIN_INSTANCES_WARMING (12):
+                A revision with min_instance_count > 0 was created and is
+                waiting for enough instances to begin a traffic migration.
         """
         REVISION_REASON_UNDEFINED = 0
         PENDING = 1
@@ -222,6 +225,7 @@ class Condition(proto.Message):
         ACTIVE_REVISION_LIMIT_REACHED = 9
         NO_DEPLOYMENT = 10
         HEALTH_CHECK_SKIPPED = 11
+        MIN_INSTANCES_WARMING = 12
 
     class ExecutionReason(proto.Enum):
         r"""Reasons specific to Execution resource.
