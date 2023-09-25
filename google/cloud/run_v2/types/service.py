@@ -388,6 +388,11 @@ class Service(proto.Message):
             https://cloud.google.com/run/docs/configuring/custom-audiences.
         satisfies_pzs (bool):
             Output only. Reserved for future use.
+        traffic_tags_cleanup_threshold (int):
+            Optional. Override the traffic tag threshold
+            limit. Garbage collection will start cleaning up
+            non-serving tagged traffic targets based on
+            creation item. The default value is 2000.
         reconciling (bool):
             Output only. Returns true if the Service is currently being
             acted upon by the system to bring it into the desired state.
@@ -549,6 +554,10 @@ class Service(proto.Message):
     satisfies_pzs: bool = proto.Field(
         proto.BOOL,
         number=38,
+    )
+    traffic_tags_cleanup_threshold: int = proto.Field(
+        proto.INT64,
+        number=39,
     )
     reconciling: bool = proto.Field(
         proto.BOOL,

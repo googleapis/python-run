@@ -937,6 +937,7 @@ def test_get_service(request_type, transport: str = "grpc"):
             uri="uri_value",
             custom_audiences=["custom_audiences_value"],
             satisfies_pzs=True,
+            traffic_tags_cleanup_threshold=3168,
             reconciling=True,
             etag="etag_value",
         )
@@ -965,6 +966,7 @@ def test_get_service(request_type, transport: str = "grpc"):
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
+    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -1019,6 +1021,7 @@ async def test_get_service_async(
                 uri="uri_value",
                 custom_audiences=["custom_audiences_value"],
                 satisfies_pzs=True,
+                traffic_tags_cleanup_threshold=3168,
                 reconciling=True,
                 etag="etag_value",
             )
@@ -1048,6 +1051,7 @@ async def test_get_service_async(
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
+    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -2489,7 +2493,17 @@ def test_create_service_rest(request_type):
             "labels": {},
             "annotations": {},
             "scaling": {"min_instance_count": 1920, "max_instance_count": 1922},
-            "vpc_access": {"connector": "connector_value", "egress": 1},
+            "vpc_access": {
+                "connector": "connector_value",
+                "egress": 1,
+                "network_interfaces": [
+                    {
+                        "network": "network_value",
+                        "subnetwork": "subnetwork_value",
+                        "tags": ["tags_value1", "tags_value2"],
+                    }
+                ],
+            },
             "timeout": {"seconds": 751, "nanos": 543},
             "service_account": "service_account_value",
             "containers": [
@@ -2536,6 +2550,7 @@ def test_create_service_rest(request_type):
                         "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
+                    "depends_on": ["depends_on_value1", "depends_on_value2"],
                 }
             ],
             "volumes": [
@@ -2555,6 +2570,7 @@ def test_create_service_rest(request_type):
                     "cloud_sql_instance": {
                         "instances": ["instances_value1", "instances_value2"]
                     },
+                    "empty_dir": {"medium": 1, "size_limit": "size_limit_value"},
                 }
             ],
             "execution_environment": 1,
@@ -2596,6 +2612,7 @@ def test_create_service_rest(request_type):
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
+        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -2831,7 +2848,17 @@ def test_create_service_rest_bad_request(
             "labels": {},
             "annotations": {},
             "scaling": {"min_instance_count": 1920, "max_instance_count": 1922},
-            "vpc_access": {"connector": "connector_value", "egress": 1},
+            "vpc_access": {
+                "connector": "connector_value",
+                "egress": 1,
+                "network_interfaces": [
+                    {
+                        "network": "network_value",
+                        "subnetwork": "subnetwork_value",
+                        "tags": ["tags_value1", "tags_value2"],
+                    }
+                ],
+            },
             "timeout": {"seconds": 751, "nanos": 543},
             "service_account": "service_account_value",
             "containers": [
@@ -2878,6 +2905,7 @@ def test_create_service_rest_bad_request(
                         "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
+                    "depends_on": ["depends_on_value1", "depends_on_value2"],
                 }
             ],
             "volumes": [
@@ -2897,6 +2925,7 @@ def test_create_service_rest_bad_request(
                     "cloud_sql_instance": {
                         "instances": ["instances_value1", "instances_value2"]
                     },
+                    "empty_dir": {"medium": 1, "size_limit": "size_limit_value"},
                 }
             ],
             "execution_environment": 1,
@@ -2938,6 +2967,7 @@ def test_create_service_rest_bad_request(
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
+        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -3056,6 +3086,7 @@ def test_get_service_rest(request_type):
             uri="uri_value",
             custom_audiences=["custom_audiences_value"],
             satisfies_pzs=True,
+            traffic_tags_cleanup_threshold=3168,
             reconciling=True,
             etag="etag_value",
         )
@@ -3088,6 +3119,7 @@ def test_get_service_rest(request_type):
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
+    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -3688,7 +3720,17 @@ def test_update_service_rest(request_type):
             "labels": {},
             "annotations": {},
             "scaling": {"min_instance_count": 1920, "max_instance_count": 1922},
-            "vpc_access": {"connector": "connector_value", "egress": 1},
+            "vpc_access": {
+                "connector": "connector_value",
+                "egress": 1,
+                "network_interfaces": [
+                    {
+                        "network": "network_value",
+                        "subnetwork": "subnetwork_value",
+                        "tags": ["tags_value1", "tags_value2"],
+                    }
+                ],
+            },
             "timeout": {"seconds": 751, "nanos": 543},
             "service_account": "service_account_value",
             "containers": [
@@ -3735,6 +3777,7 @@ def test_update_service_rest(request_type):
                         "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
+                    "depends_on": ["depends_on_value1", "depends_on_value2"],
                 }
             ],
             "volumes": [
@@ -3754,6 +3797,7 @@ def test_update_service_rest(request_type):
                     "cloud_sql_instance": {
                         "instances": ["instances_value1", "instances_value2"]
                     },
+                    "empty_dir": {"medium": 1, "size_limit": "size_limit_value"},
                 }
             ],
             "execution_environment": 1,
@@ -3795,6 +3839,7 @@ def test_update_service_rest(request_type):
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
+        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -4008,7 +4053,17 @@ def test_update_service_rest_bad_request(
             "labels": {},
             "annotations": {},
             "scaling": {"min_instance_count": 1920, "max_instance_count": 1922},
-            "vpc_access": {"connector": "connector_value", "egress": 1},
+            "vpc_access": {
+                "connector": "connector_value",
+                "egress": 1,
+                "network_interfaces": [
+                    {
+                        "network": "network_value",
+                        "subnetwork": "subnetwork_value",
+                        "tags": ["tags_value1", "tags_value2"],
+                    }
+                ],
+            },
             "timeout": {"seconds": 751, "nanos": 543},
             "service_account": "service_account_value",
             "containers": [
@@ -4055,6 +4110,7 @@ def test_update_service_rest_bad_request(
                         "grpc": {"port": 453, "service": "service_value"},
                     },
                     "startup_probe": {},
+                    "depends_on": ["depends_on_value1", "depends_on_value2"],
                 }
             ],
             "volumes": [
@@ -4074,6 +4130,7 @@ def test_update_service_rest_bad_request(
                     "cloud_sql_instance": {
                         "instances": ["instances_value1", "instances_value2"]
                     },
+                    "empty_dir": {"medium": 1, "size_limit": "size_limit_value"},
                 }
             ],
             "execution_environment": 1,
@@ -4115,6 +4172,7 @@ def test_update_service_rest_bad_request(
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
+        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
