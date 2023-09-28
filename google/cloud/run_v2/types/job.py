@@ -257,7 +257,7 @@ class RunJobRequest(proto.Message):
 
     class Overrides(proto.Message):
         r"""RunJob Overrides that contains Execution fields to be
-        overridden on the go.
+        overridden.
 
         Attributes:
             container_overrides (MutableSequence[google.cloud.run_v2.types.RunJobRequest.Overrides.ContainerOverride]):
@@ -272,7 +272,7 @@ class RunJobRequest(proto.Message):
         """
 
         class ContainerOverride(proto.Message):
-            r"""Per container override specification.
+            r"""Per-container override specification.
 
             Attributes:
                 name (str):

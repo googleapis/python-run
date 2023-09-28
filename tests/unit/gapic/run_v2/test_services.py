@@ -937,7 +937,6 @@ def test_get_service(request_type, transport: str = "grpc"):
             uri="uri_value",
             custom_audiences=["custom_audiences_value"],
             satisfies_pzs=True,
-            traffic_tags_cleanup_threshold=3168,
             reconciling=True,
             etag="etag_value",
         )
@@ -966,7 +965,6 @@ def test_get_service(request_type, transport: str = "grpc"):
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
-    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -1021,7 +1019,6 @@ async def test_get_service_async(
                 uri="uri_value",
                 custom_audiences=["custom_audiences_value"],
                 satisfies_pzs=True,
-                traffic_tags_cleanup_threshold=3168,
                 reconciling=True,
                 etag="etag_value",
             )
@@ -1051,7 +1048,6 @@ async def test_get_service_async(
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
-    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -2612,7 +2608,6 @@ def test_create_service_rest(request_type):
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
-        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -2967,7 +2962,6 @@ def test_create_service_rest_bad_request(
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
-        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -3086,7 +3080,6 @@ def test_get_service_rest(request_type):
             uri="uri_value",
             custom_audiences=["custom_audiences_value"],
             satisfies_pzs=True,
-            traffic_tags_cleanup_threshold=3168,
             reconciling=True,
             etag="etag_value",
         )
@@ -3119,7 +3112,6 @@ def test_get_service_rest(request_type):
     assert response.uri == "uri_value"
     assert response.custom_audiences == ["custom_audiences_value"]
     assert response.satisfies_pzs is True
-    assert response.traffic_tags_cleanup_threshold == 3168
     assert response.reconciling is True
     assert response.etag == "etag_value"
 
@@ -3839,7 +3831,6 @@ def test_update_service_rest(request_type):
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
-        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }
@@ -4172,7 +4163,6 @@ def test_update_service_rest_bad_request(
         "uri": "uri_value",
         "custom_audiences": ["custom_audiences_value1", "custom_audiences_value2"],
         "satisfies_pzs": True,
-        "traffic_tags_cleanup_threshold": 3168,
         "reconciling": True,
         "etag": "etag_value",
     }

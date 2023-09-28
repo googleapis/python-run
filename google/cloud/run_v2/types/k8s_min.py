@@ -215,8 +215,8 @@ class EnvVar(proto.Message):
 
     Attributes:
         name (str):
-            Required. Name of the environment variable. Must be a
-            C_IDENTIFIER, and must not exceed 32768 characters.
+            Required. Name of the environment variable.
+            Must not exceed 32768 characters.
         value (str):
             Variable references $(VAR_NAME) are expanded using the
             previous defined environment variables in the container and
